@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_visitation_patient_room,access_visitation_patient_room,model_patient_room,base.group_user,1,1,1,1
+access_visitation_availability_slot,access_visitation_availability_slot,model_availability_slot,base.group_user,1,1,1,1
+access_visitation_visitor_visitor,access_visitation_visitor_visitor,model_visitor_visitor,base.group_user,1,1,1,1
+access_visitation_visitor_screening,access_visitation_visitor_screening,model_visitor_screening,base.group_user,1,1,1,1
+access_visitation_scheduled_visit,access_visitation_scheduled_visit,model_scheduled_visit,base.group_user,1,1,1,1
+access_visitation_visit_request,access_visitation_visit_request,model_visit_request,base.group_user,1,1,1,1
+

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+
+    <record id="view_patient_room_tree" model="ir.ui.view">
+      <field name="name">view_patient_room_tree</field>
+      <field name="model">patient.room</field>
+      <field name="arch" type="xml">
+        <tree editable="bottom">
+          <field name="room_number" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_availability_slot_tree" model="ir.ui.view">
+      <field name="name">view_availability_slot_tree</field>
+      <field name="model">availability.slot</field>
+      <field name="arch" type="xml">
+        <tree editable="bottom">
+          <field name="availability_start_time" widget="daterange"
+            options="{'related_end_date': 'availability_end_time'}"/>
+          <field name="availability_end_time" widget="daterange"
+            options="{'related_start_date': 'availability_start_time'}"/>
+          <field name="capacity" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_visitor_visitor_tree" model="ir.ui.view">
+      <field name="name">view_visitor_visitor_tree</field>
+      <field name="model">visitor.visitor</field>
+      <field name="arch" type="xml">
+        <tree editable="bottom">
+          <field name="name" />
+          <field name="email" />
+        </tree>
+      </field>
+    </record>
+    
+    <record id="view_visitor_screening_tree" model="ir.ui.view">
+      <field name="name">view_visitor_screening_tree</field>
+      <field name="model">visitor.screening</field>
+      <field name="arch" type="xml">
+        <tree editable="bottom">
+          <field name="visitor_id" />
+          <field name="visitor_test_date" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_scheduled_visit_tree" model="ir.ui.view">
+      <field name="name">view_scheduled_visit_tree</field>
+      <field name="model">scheduled.visit</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="visit_availability_slot_id" />
+          <field name="visitor_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_visit_request_tree" model="ir.ui.view">
+      <field name="name">view_visit_request_tree</field>
+      <field name="model">visit.request</field>
+      <field name="arch" type="xml">
+        <tree editable="bottom">
+          <field name="visitor_name" />
+          <field name="visitor_email" />
+          <field name="visitor_test_date" />
+          <field name="visit_room_id" />
+          <field name="visitor_id" />
+          <field name="screening_id" />
+          <field name="availability_ids" widget="many2many_tags" />
+          <field name="scheduled_visit_id" />
+        </tree>
+      </field>
+    </record>
+
+  </data>
+</odoo>

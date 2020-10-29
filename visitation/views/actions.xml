@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+
+    <record id="action_patient_room" model="ir.actions.act_window">
+      <field name="name">Rooms</field>
+      <field name="res_model">patient.room</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_availability_slot" model="ir.actions.act_window">
+      <field name="name">Availability Slots</field>
+      <field name="res_model">availability.slot</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_visitor_visitor" model="ir.actions.act_window">
+      <field name="name">Visitors</field>
+      <field name="res_model">visitor.visitor</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_visitor_screening" model="ir.actions.act_window">
+      <field name="name">Visitor Screening</field>
+      <field name="res_model">visitor.screening</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_scheduled_visit" model="ir.actions.act_window">
+      <field name="name">Scheduled Visits</field>
+      <field name="res_model">scheduled.visit</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_visit_request" model="ir.actions.act_window">
+      <field name="name">Visit Requests</field>
+      <field name="res_model">visit.request</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    
+  </data>
+</odoo>

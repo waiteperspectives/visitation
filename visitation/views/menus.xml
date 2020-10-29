@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+
+    <menuitem
+        id="menu_visitation_root"
+        name="Visitation"
+        action="action_scheduled_visit"
+        web_icon="visitation,static/description/icon.png"
+      />
+
+    <menuitem
+        id="menu_visitation_scheduled_visit"
+        name="Scheduled Visit"
+        action="action_scheduled_visit"
+        parent="menu_visitation_root"
+      />
+    
+    <menuitem
+        id="menu_visitation_vist_request"
+        name="Visit Requests"
+        action="action_visit_request"
+        parent="menu_visitation_root"
+      />
+
+    <menuitem
+        id="menu_visitation_availability"
+        name="Availabilities"
+        action="action_availability_slot"
+        parent="menu_visitation_root"
+      />
+
+    <menuitem
+        id="menu_visitation_visitor_screening"
+        name="Visitor Screening"
+        action="action_visitor_screening"
+        parent="menu_visitation_root"
+      />
+
+    <menuitem
+        id="menu_visitation_visitor_visitor"
+        name="Visitors"
+        action="action_visitor_visitor"
+        parent="menu_visitation_root"
+      />
+
+    <menuitem
+        id="menu_visitation_patient_room"
+        name="Rooms"
+        action="action_patient_room"
+        parent="menu_visitation_root"
+      />
+
+  </data>
+</odoo>

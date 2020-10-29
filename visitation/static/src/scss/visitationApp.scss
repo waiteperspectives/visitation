@@ -1,0 +1,51 @@
+$circle-diameter: 40px;
+$normal-color: $secondary;
+$active-color: $primary;
+
+.VisitationApp {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .Stepper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: $circle-diameter;
+    margin: 0;
+    padding: 0 0.5rem;
+
+      .Stepper-Step-Circle {
+        max-width: $circle-diameter;
+        height: $circle-diameter;
+        line-height: $circle-diameter;
+        display: flex;
+        flex-grow: 1;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: $normal-color;
+
+        &.complete {
+          background-color: $active-color;
+        }
+      }
+
+      .Stepper-Step-Bar {
+        display: flex;
+        flex-grow: 1;
+        height: 5px;
+        background-color: $normal-color;
+
+        &.complete {
+          background-color: $active-color;
+        }
+
+        &.invisible {
+          background-color: none;
+          height: 0;
+        }
+
+    }
+  }
+}

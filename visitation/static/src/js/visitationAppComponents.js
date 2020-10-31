@@ -26,7 +26,10 @@ odoo.define('visitation.visitationAppComponents', function() {
         <div class="row justify-content-center">
           <div class="col-6 text-center">
             <h1>TODO</h1>
-            <button t-on-click="previousStep">Back</button>
+            <button class="btn" t-on-click="previousStep">
+              <i class="fa fa-arrow-left" />
+              Back
+            </button>
           </div>
         </div>
       </div>
@@ -68,8 +71,8 @@ odoo.define('visitation.visitationAppComponents', function() {
                 </t>
               </select>
             </div>
-           <div t-if="validForm()" class="d-flex justify-content-end">
-             <button type="submit">
+           <div class="d-flex justify-content-end">
+             <button t-if="validForm()" type="submit" class="btn btn-primary">
                Forward
                <i class="fa fa-arrow-right" />
              </button>
@@ -96,13 +99,62 @@ odoo.define('visitation.visitationAppComponents', function() {
 
   }
 
+  class SchedulingForm extends StepForm {
+    static template = xml`
+      <div class="SchedulingForm container">
+        <div class="row justify-content-center">
+          <form t-on-submit.prevent="nextStep" class="col-6">
+            <div class="form-group">
+              <label for="visitRequestSlot">Name</label>
+              <select id="visitRequestSlot" class="form-control" t-model="state.visitRequestSlot">
+                <t t-foreach="props.init.availabilities" t-as="availability">
+                  <t t-if="availability.id === state.visitRequestSlot">
+                    <option t-att-value="availability.id" selected="1">
+                      <t t-esc="availability.name" />
+                    </option>
+                  </t>
+                  <t t-else="">
+                    <option t-att-value="availability.id">
+                      <t t-esc="availability.name" />
+                    </option>
+                  </t>
+                </t>
+              </select>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="button" t-on-click="previousStep" class="btn">
+                <i class="fa fa-arrow-left" />
+                Back
+              </button>
+              <button t-if="validForm()" type="submit" class="btn btn-primary">
+                Forward
+                <i class="fa fa-arrow-right" />
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    state = useState({
+      visitRequestSlot: this.props.init.visitRequest.visitRequestSlot,
+    });
+
+    validForm() {
+      if ( !this.state.visitRequestSlot ) { return false; }
+      return true;
+    }
+
+  }
+
 
   class VisitationApp extends Component {
       static template = xml`
           <div class="VisitationApp container">
              <Stepper steps="state.steps" />
              <ScreeningForm init="state.visitRequest" dataValues="state.dataValues" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" />
-             <StepForm t-if="getCurrentIndex() !== 0" previousStep="stepBackward" />
+             <SchedulingForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 1" />
+             <StepForm previousStep="stepBackward" t-if="getCurrentIndex() === 2" />
              <p class="text-muted">
                <span>Visit Request #</span>
                <span t-esc="state.visitRequest.visitRequestId"/>
@@ -112,7 +164,7 @@ odoo.define('visitation.visitationAppComponents', function() {
           </div>
       `;
 
-      static components = { Stepper, ScreeningForm, StepForm };
+      static components = { Stepper, ScreeningForm, SchedulingForm, StepForm };
 
       state = useState({
         steps: [
@@ -122,6 +174,16 @@ odoo.define('visitation.visitationAppComponents', function() {
         ],
         dataValues: {
           rooms: ['123', '456', '780'],
+          availabilities: [
+            {
+              id: 1,
+              name: "Sat. 10/31: 8 - 9 AM",
+            },
+            {
+              id: 2,
+              name: "Sat. 10/31: 9 - 10 AM",
+            }
+          ],
         },
         visitRequest: {
           visitRequestId: "1234",
@@ -130,8 +192,9 @@ odoo.define('visitation.visitationAppComponents', function() {
           visitorEmail: "",
           testDate: new Date(),
           residentRoom: "",
-        }
-      });
+          visitRequestSlot: 0,
+      }
+    });
 
     getCurrentIndex = () => {
       let current = -1;
@@ -178,6 +241,11 @@ odoo.define('visitation.visitationAppComponents', function() {
     }
 
     screeningFormSubmit = (vals) => {
+      Object.assign(this.state.visitRequest, vals);
+      this.stepForward();
+    }
+
+    schedulingFormSubmit = (vals) => {
       Object.assign(this.state.visitRequest, vals);
       this.stepForward();
     }

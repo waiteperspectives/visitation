@@ -8,6 +8,10 @@ $active-color: $primary;
   justify-content: center;
   align-items: center;
 
+  form {
+    height: 400px;
+  }
+
   .Stepper {
     display: flex;
     align-items: center;

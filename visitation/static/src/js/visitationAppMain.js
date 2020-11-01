@@ -1,6 +1,7 @@
 odoo.define('visitation.visitationAppMain', function(require) {
   'use strict';
 
+  const { ResidentForm } = require('visitation.visitationAppResidentForm');
   const { ScreeningForm } = require('visitation.visitationAppVisitorForm');
   const { SchedulingForm } = require('visitation.visitationAppSchedulingForm');
   const { ResultsForm } = require('visitation.visitationAppResultsForm');
@@ -13,9 +14,10 @@ odoo.define('visitation.visitationAppMain', function(require) {
       static template = xml`
           <div class="VisitationApp container">
              <Stepper steps="state.steps" />
-             <ScreeningForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" />
-             <SchedulingForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 1" />
-             <ResultsForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" previousStep="stepBackward" t-if="getCurrentIndex() === 2" />
+             <ResidentForm init="state.visitRequest" dataValues="state.dataValues" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" />
+             <ScreeningForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 1" />
+             <SchedulingForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 2" />
+             <ResultsForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" previousStep="stepBackward" t-if="getCurrentIndex() === 3" />
              <p class="text-muted">
                <span>Visit Request #</span>
                <span t-esc="state.visitRequest.visitRequestId"/>
@@ -25,16 +27,22 @@ odoo.define('visitation.visitationAppMain', function(require) {
           </div>
       `;
 
-      static components = { Stepper, ScreeningForm, SchedulingForm, ResultsForm };
+      static components = { Stepper, ResidentForm, ScreeningForm, SchedulingForm, ResultsForm };
 
       state = useState({
         steps: [
           {key: 1, complete: true, last: false, first: true},
           {key: 2, complete: false, last: false, first: false},
-          {key: 3, complete: false, last: true, first: false},
+          {key: 3, complete: false, last: false, first: false},
+          {key: 4, complete: false, last: true, first: false},
         ],
         dataValues: {
-          rooms: ['123', '456', '780'],
+          beds: [
+            {id: 1, unit_id: [7, "A Wing"], room_id: [77, "123"], bed_id: [99, "1"]},
+            {id: 2, unit_id: [7, "A Wing"], room_id: [77, "123"], bed_id: [98, "2"]},
+            {id: 3, unit_id: [7, "A Wing"], room_id: [78, "456"], bed_id: [97, "1"]},
+            {id: 4, unit_id: [8, "B Wing"], room_id: [99, "456"], bed_id: [96, "1"]},
+          ],
           availabilities: [
             {
               id: 1,
@@ -51,6 +59,8 @@ odoo.define('visitation.visitationAppMain', function(require) {
           visitRequestDate: new Date(),
           visitConfirmationMessage: "A confirmation email has been sent to your email. Please call us if you unable to make your visit",
           residentRoom: "",
+          residentUnit: "",
+          residentBed: "",
           visitRequestSlot: 0,
           visitors: [],
       }

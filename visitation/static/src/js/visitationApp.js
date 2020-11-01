@@ -1,7 +1,7 @@
 odoo.define('visitation.visitationApp', function(require) {
   'use strict';
 
-  const { VisitationApp } = require('visitation.visitationAppComponents');
+  const { VisitationApp } = require('visitation.visitationAppMain');
 
   // patch navbar to notify when entering edit mode
   const navbar = require('website.navbar');

@@ -11,15 +11,15 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
         <div class="card-body">
           <div class="form-group">
             <label for="visitorName">Name</label>
-            <input class="form-control" name="visitorName" t-model="state.visitorName" t-on-blur="update" />
+            <input class="form-control" name="visitorName" t-model="state.visitorName" t-on-change="update" />
           </div>
           <div t-if="state.visitorPrimary" class="form-group">
             <label for="visitorEmail">Email</label>
-            <input class="form-control" name="visitorEmail" t-model="state.visitorEmail" t-on-blur="update" />
+            <input class="form-control" name="visitorEmail" t-model="state.visitorEmail" t-on-change="update" />
           </div>
           <div class="form-group">
             <label for="visitorTestDate">Test Date</label>
-            <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-blur="update" />
+            <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" />
           </div>
         </div>
       </div>
@@ -49,14 +49,6 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       <div class="ScreeningForm container">
         <div class="row justify-content-center">
           <form t-on-submit.prevent="nextStep" class="col-md-6">
-            <div class="form-group">
-              <label for="residentRoom">What unit, room, bed position</label>
-              <select id="residentRoom" class="form-control" placeholder="Pick a room" t-model="state.residentRoom">
-                <t t-foreach="props.dataValues.rooms" t-as="room" t-key="room">
-                  <option value="room"><t t-esc="room" /></option>
-                </t>
-              </select>
-            </div>
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <VisitorCard visitor="visitor" update="updateVisitor" />
             </t>
@@ -66,7 +58,11 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
                 Add Visitor
               </button>
             </div>
-           <div class="d-flex justify-content-end">
+           <div class="d-flex justify-content-between">
+              <button type="button" t-on-click="previousStep" class="btn">
+                <i class="fa fa-arrow-left" />
+                Back
+              </button>
              <button t-if="validForm()" type="submit" class="btn btn-primary">
                Forward
                <i class="fa fa-arrow-right" />
@@ -102,12 +98,10 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
     }
 
     state = useState({
-      residentRoom: this.props.init.residentRoom,
       visitors: this.props.init.visitors.length ? this.props.init.visitors: this.generateDefaultVisitors(),
     });
 
     validForm = () => {
-      if ( !this.state.residentRoom ) { return false; }
       if ( this.state.visitors.map(v => {
         return v.isValid();
       }).includes(false) ) { return false; }

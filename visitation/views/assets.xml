@@ -6,6 +6,7 @@
       <xpath expr="." position="inside">
         <script type="text/javascript" src="/visitation/static/src/js/visitationAppBase.js" />
         <script type="text/javascript" src="/visitation/static/src/js/visitationAppStepper.js" />
+        <script type="text/javascript" src="/visitation/static/src/js/visitationAppResidentForm.js" />
         <script type="text/javascript" src="/visitation/static/src/js/visitationAppVisitorForm.js" />
         <script type="text/javascript" src="/visitation/static/src/js/visitationAppSchedulingForm.js" />
         <script type="text/javascript" src="/visitation/static/src/js/visitationAppResultsForm.js" />

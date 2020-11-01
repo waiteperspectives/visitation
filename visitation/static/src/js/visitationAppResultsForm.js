@@ -7,7 +7,7 @@ odoo.define('visitation.visitationAppResultsForm', function(require) {
 
   class ResultsForm extends StepForm {
     static template = xml`
-      <div class="ResultsForm container">
+      <div class="ResultsForm container mt-3">
         <div class="row justify-content-center">
           <form t-on-submit.prevent="" class="col-md-6">
             <div class="alert alert-success" role="alert">
@@ -20,7 +20,7 @@ odoo.define('visitation.visitationAppResultsForm', function(require) {
               </p>
             </div>
             <div class="d-flex justify-content-between">
-              <button type="button" t-on-click="previousStep" class="btn">
+              <button type="button" t-on-click="previousStep" class="btn btn-outline-secondary">
                 <i class="fa fa-arrow-left" />
                 Back
               </button>

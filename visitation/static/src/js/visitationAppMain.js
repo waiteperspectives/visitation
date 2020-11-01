@@ -2,7 +2,7 @@ odoo.define('visitation.visitationAppMain', function(require) {
   'use strict';
 
   const { ResidentForm } = require('visitation.visitationAppResidentForm');
-  const { ScreeningForm } = require('visitation.visitationAppVisitorForm');
+  const { VisitorForm } = require('visitation.visitationAppVisitorForm');
   const { SchedulingForm } = require('visitation.visitationAppSchedulingForm');
   const { ResultsForm } = require('visitation.visitationAppResultsForm');
   const { Stepper } = require('visitation.visitationAppStepper');
@@ -15,7 +15,7 @@ odoo.define('visitation.visitationAppMain', function(require) {
           <div class="VisitationApp container">
              <Stepper steps="state.steps" />
              <ResidentForm init="state.visitRequest" dataValues="state.dataValues" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" />
-             <ScreeningForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 1" />
+             <VisitorForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 1" />
              <SchedulingForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 2" />
              <ResultsForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" previousStep="stepBackward" t-if="getCurrentIndex() === 3" />
              <p class="text-muted">
@@ -27,7 +27,7 @@ odoo.define('visitation.visitationAppMain', function(require) {
           </div>
       `;
 
-      static components = { Stepper, ResidentForm, ScreeningForm, SchedulingForm, ResultsForm };
+      static components = { Stepper, ResidentForm, VisitorForm, SchedulingForm, ResultsForm };
 
       state = useState({
         steps: [

@@ -44,22 +44,23 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
     }
   }
 
-  class ScreeningForm extends StepForm {
+  class VisitorForm extends StepForm {
     static template = xml`
-      <div class="ScreeningForm container">
+      <div class="VisitorForm container mt-3">
         <div class="row justify-content-center">
           <form t-on-submit.prevent="nextStep" class="col-md-6">
+            <h3>Who will be visiting?</h3>
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <VisitorCard visitor="visitor" update="updateVisitor" />
             </t>
-            <div class="d-flex justify-content-start">
+            <div t-if="state.visitors.length &lt; 2" class="d-flex justify-content-start">
               <button class="btn" type="button" t-on-click="addVisitor">
                 <i class="fa fa-plus" />
                 Add Visitor
               </button>
             </div>
            <div class="d-flex justify-content-between">
-              <button type="button" t-on-click="previousStep" class="btn">
+              <button type="button" t-on-click="previousStep" class="btn btn-outline-secondary">
                 <i class="fa fa-arrow-left" />
                 Back
               </button>
@@ -112,8 +113,5 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
 
   }
 
-  return {
-    ScreeningForm
-  }
-
+  return { VisitorForm }
 });

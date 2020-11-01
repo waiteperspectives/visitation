@@ -7,12 +7,14 @@ odoo.define('visitation.visitationAppSchedulingForm', function(require) {
 
   class SchedulingForm extends StepForm {
     static template = xml`
-      <div class="SchedulingForm container">
+      <div class="SchedulingForm container mt-3">
         <div class="row justify-content-center">
           <form t-on-submit.prevent="nextStep" class="col-md-6">
+            <h3>When would you like to visit?</h3>
             <div class="form-group">
-              <label for="visitRequestSlot">Name</label>
+              <label for="visitRequestSlot">Time Slot</label>
               <select id="visitRequestSlot" class="form-control" t-model="state.visitRequestSlot">
+                <option value="" selected="1" disabled="1" hidden="1">Choose Time Slot</option>
                 <t t-foreach="props.init.availabilities" t-as="availability">
                   <t t-if="availability.id === state.visitRequestSlot">
                     <option t-att-value="availability.id" selected="1">
@@ -28,7 +30,7 @@ odoo.define('visitation.visitationAppSchedulingForm', function(require) {
               </select>
             </div>
             <div class="d-flex justify-content-between">
-              <button type="button" t-on-click="previousStep" class="btn">
+              <button type="button" t-on-click="previousStep" class="btn btn-outline-secondary">
                 <i class="fa fa-arrow-left" />
                 Back
               </button>

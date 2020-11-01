@@ -4,6 +4,42 @@ odoo.define('visitation.visitationAppComponents', function() {
   const { Component, useState } = owl;
   const { xml } = owl.tags;
 
+  class Visitor {
+    constructor(kwargs) {
+      this.id = Math.floor(Math.random() * 10000);
+      this.name = kwargs.name || "";
+      this.email = kwargs.email || "";
+      this.testDate = kwargs.testDate || undefined;
+      this.primary = kwargs.primary || false;
+    }
+
+    isValid = () => {
+      if ( !this.name ) { return false; }
+      if ( !this.testDate instanceof Date || isNaN(this.testDate) ) { return false; }
+      if ( this.primary && !this.email ) { return false; }
+      return true
+    }
+
+    toJson = () => {
+      return {
+        name: this.name,
+        email: this.email,
+        testDate: this.testDate.toISOString(),
+        primary: this.primary,
+      }
+    }
+
+    static fromJson = (json) => {
+      kwargs = {
+        name: json.name,
+        email: json.email,
+        testDate: new Date(json.testDate),
+        primary: json.primary,
+      };
+      return new Visitor(kwargs);
+    }
+  }
+
   class Stepper extends Component {
     static template = xml`
     <div class="Stepper">
@@ -24,7 +60,7 @@ odoo.define('visitation.visitationAppComponents', function() {
     static template = xml`
       <div class="container">
         <div class="row justify-content-center">
-          <div class="col-6 text-center">
+          <div class="col-md-6 text-center">
             <h1>TODO</h1>
             <button class="btn" t-on-click="previousStep">
               <i class="fa fa-arrow-left" />
@@ -46,30 +82,66 @@ odoo.define('visitation.visitationAppComponents', function() {
     }
   }
 
+  class VisitorCard extends Component {
+    static template = xml`
+      <div class="VisitorCard card mb-3">
+        <div class="card-body">
+          <div class="form-group">
+            <label for="visitorName">Name</label>
+            <input class="form-control" name="visitorName" t-model="state.visitorName" t-on-blur="update" />
+          </div>
+          <div t-if="state.visitorPrimary" class="form-group">
+            <label for="visitorEmail">Email</label>
+            <input class="form-control" name="visitorEmail" t-model="state.visitorEmail" t-on-blur="update" />
+          </div>
+          <div class="form-group">
+            <label for="visitorTestDate">Test Date</label>
+            <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-blur="update" />
+          </div>
+        </div>
+      </div>
+    `;
+
+    state = useState({
+      visitorName: this.props.visitor.name,
+      visitorEmail: this.props.visitor.email,
+      visitorTestDate: this.props.visitor.testDate,
+      visitorPrimary: this.props.visitor.primary,
+    });
+
+    update = () => {
+      const visitor = new Visitor({
+        name: this.state.visitorName,
+        email: this.state.visitorEmail,
+        testDate: new Date(this.state.visitorTestDate),
+        primary: this.state.visitorPrimary,
+      });
+      visitor.id = this.props.visitor.id;
+      this.props.update(visitor);
+    }
+  }
+
   class ScreeningForm extends StepForm {
     static template = xml`
       <div class="ScreeningForm container">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="col-6">
+          <form t-on-submit.prevent="nextStep" class="col-md-6">
             <div class="form-group">
-              <label for="visitorName">Name</label>
-              <input id="visitorName" class="form-control" t-model="state.visitorName" />
-            </div>
-            <div class="form-group">
-              <label for="visitorEmail">Email</label>
-              <input id="visitorEmail" class="form-control" t-model="state.visitorEmail" />
-            </div>
-            <div class="form-group">
-              <label for="testDate">Test Date</label>
-              <input type="date" id="testDate" class="form-control" t-model="state.testDate" />
-            </div>
-            <div class="form-group">
-              <label for="residentRoom">Resident Room</label>
+              <label for="residentRoom">What unit, room, bed position</label>
               <select id="residentRoom" class="form-control" placeholder="Pick a room" t-model="state.residentRoom">
-                <t t-foreach="props.dataValues.rooms" t-as="room">
+                <t t-foreach="props.dataValues.rooms" t-as="room" t-key="room">
                   <option value="room"><t t-esc="room" /></option>
                 </t>
               </select>
+            </div>
+            <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
+              <VisitorCard visitor="visitor" update="updateVisitor" />
+            </t>
+            <div class="d-flex justify-content-start">
+              <button class="btn" type="button" t-on-click="addVisitor">
+                <i class="fa fa-plus" />
+                Add Visitor
+              </button>
             </div>
            <div class="d-flex justify-content-end">
              <button t-if="validForm()" type="submit" class="btn btn-primary">
@@ -82,20 +154,44 @@ odoo.define('visitation.visitationAppComponents', function() {
       </div>
     `;
 
+    generateDefaultVisitors = () => {
+      return [new Visitor({
+        name: "",
+        email: "",
+        testDate: undefined,
+        primary: true,
+      })];
+    }
+
+    addVisitor = () => {
+      this.state.visitors.push(new Visitor({}));
+    }
+
+    updateVisitor = (visitor) => {
+      const newVisitors = [...this.state.visitors];
+      const ndx = newVisitors.findIndex(v => v.id === visitor.id);
+      newVisitors.splice(ndx, 1, visitor);
+      this.state.visitors = newVisitors;
+    }
+
+    deleteVisitor = (visitor) => {
+      this.state.visitors = this.state.visitors.filter(v => v.id !== visitor.id);
+    }
+
     state = useState({
-      visitorName: this.props.init.visitorName,
-      visitorEmail: this.props.init.visitorEmail,
-      testDate: this.props.init.testDate,
       residentRoom: this.props.init.residentRoom,
+      visitors: this.props.init.visitors.length ? this.props.init.visitors: this.generateDefaultVisitors(),
     });
 
-    validForm() {
-      if ( !this.state.visitorName ) { return false; }
-      if ( !this.state.visitorEmail ) { return false; }
-      if ( !this.state.testDate ) { return false; }
+    validForm = () => {
       if ( !this.state.residentRoom ) { return false; }
+      if ( this.state.visitors.map(v => {
+        return v.isValid();
+      }).includes(false) ) { return false; }
       return true;
     }
+
+    static components = { VisitorCard };
 
   }
 
@@ -103,7 +199,7 @@ odoo.define('visitation.visitationAppComponents', function() {
     static template = xml`
       <div class="SchedulingForm container">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="col-6">
+          <form t-on-submit.prevent="nextStep" class="col-md-6">
             <div class="form-group">
               <label for="visitRequestSlot">Name</label>
               <select id="visitRequestSlot" class="form-control" t-model="state.visitRequestSlot">
@@ -147,14 +243,50 @@ odoo.define('visitation.visitationAppComponents', function() {
 
   }
 
+  class ResultsForm extends StepForm {
+    static template = xml`
+      <div class="ResultsForm container">
+        <div class="row justify-content-center">
+          <form t-on-submit.prevent="" class="col-md-6">
+            <div class="alert alert-success" role="alert">
+              <p>
+              Your visit has been scheduled for:
+              <strong><span t-esc="state.visitRequestSlotLabel" /></strong>
+              </p>
+              <p>
+                <t t-esc="state.visitConfirmationMessage" />
+              </p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="button" t-on-click="previousStep" class="btn">
+                <i class="fa fa-arrow-left" />
+                Back
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    _getVisitRequestSlotLabel = () => {
+      return this.props.init.availabilities.find(slot => slot.id == this.props.init.visitRequest.visitRequestSlot).name;
+    }
+
+    state = useState({
+      visitRequestSlotLabel: this._getVisitRequestSlotLabel(), 
+      visitConfirmationMessage: this.props.init.visitRequest.visitConfirmationMessage,
+    });
+
+  }
+
 
   class VisitationApp extends Component {
       static template = xml`
           <div class="VisitationApp container">
              <Stepper steps="state.steps" />
-             <ScreeningForm init="state.visitRequest" dataValues="state.dataValues" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" />
+             <ScreeningForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" />
              <SchedulingForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 1" />
-             <StepForm previousStep="stepBackward" t-if="getCurrentIndex() === 2" />
+             <ResultsForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" previousStep="stepBackward" t-if="getCurrentIndex() === 2" />
              <p class="text-muted">
                <span>Visit Request #</span>
                <span t-esc="state.visitRequest.visitRequestId"/>
@@ -164,7 +296,7 @@ odoo.define('visitation.visitationAppComponents', function() {
           </div>
       `;
 
-      static components = { Stepper, ScreeningForm, SchedulingForm, StepForm };
+      static components = { Stepper, ScreeningForm, SchedulingForm, ResultsForm };
 
       state = useState({
         steps: [
@@ -188,13 +320,16 @@ odoo.define('visitation.visitationAppComponents', function() {
         visitRequest: {
           visitRequestId: "1234",
           visitRequestDate: new Date(),
-          visitorName: "",
-          visitorEmail: "",
-          testDate: new Date(),
+          visitConfirmationMessage: "A confirmation email has been sent to your email. Please call us if you unable to make your visit",
           residentRoom: "",
           visitRequestSlot: 0,
+          visitors: [],
       }
     });
+
+    addVisitor = (visitor) => {
+      this.state.visitRequest.visitors.push(visitor);
+    }
 
     getCurrentIndex = () => {
       let current = -1;
@@ -248,6 +383,13 @@ odoo.define('visitation.visitationAppComponents', function() {
     schedulingFormSubmit = (vals) => {
       Object.assign(this.state.visitRequest, vals);
       this.stepForward();
+      //this.rpc({
+      //  model: "res.partner",
+      //  method: "search",
+      //  args: [[]],
+      //}).then(rs => {
+      //  console.log(rs);
+      //});
     }
 
   }

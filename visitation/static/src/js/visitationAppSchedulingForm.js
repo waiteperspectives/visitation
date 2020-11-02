@@ -10,7 +10,7 @@ odoo.define('visitation.visitationAppSchedulingForm', function(require) {
       <div class="SchedulingForm container mt-3">
         <div class="row justify-content-center">
           <form t-on-submit.prevent="nextStep" class="col-md-6">
-            <h3>When would you like to visit?</h3>
+            <h3><t t-esc="props.heading" /></h3>
             <div class="form-group">
               <label for="visitRequestSlot">Time Slot</label>
               <select id="visitRequestSlot" class="form-control" t-model="state.visitRequestSlot">

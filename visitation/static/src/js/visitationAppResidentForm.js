@@ -10,7 +10,7 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
       <div class="ResidentForm container mt-3">
         <div class="row justify-content-center">
           <form t-on-submit.prevent="nextStep" class="col-md-6">
-            <h3>Where does the resident that you would like to visit currently reside?</h3>
+            <h3><t t-esc="props.heading" /></h3>
             <div class="form-group">
               <label for="residentUnit">Unit</label>
               <select id="residentUnit" class="form-control" t-on-change="residentUnitChanged">

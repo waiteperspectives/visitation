@@ -87,7 +87,7 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       <div class="VisitorForm container mt-3">
         <div class="row justify-content-center">
           <form t-on-submit.prevent="nextStep" class="col-md-6">
-            <h3>Who will be visiting?</h3>
+            <h3><t t-esc="props.heading" /></h3>
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <VisitorCard visitor="visitor" update="updateVisitor" states="props.dataValues.states" />
             </t>

@@ -14,10 +14,10 @@ odoo.define('visitation.visitationAppMain', function(require) {
       static template = xml`
           <div class="VisitationApp container">
              <Stepper steps="state.steps" />
-             <ResidentForm init="state.visitRequest" dataValues="state.dataValues" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" />
-             <VisitorForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 1" />
-             <SchedulingForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 2" />
-             <ResultsForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" previousStep="stepBackward" t-if="getCurrentIndex() === 3" />
+             <ResidentForm init="state.visitRequest" dataValues="state.dataValues" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" heading="state.steps[0].heading" />
+             <VisitorForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 1" heading="state.steps[1].heading" />
+             <SchedulingForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 2" heading="state.steps[2].heading" />
+             <ResultsForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" previousStep="stepBackward" t-if="getCurrentIndex() === 3" heading="state.steps[3].heading" />
              <p class="text-muted">
                <span>Visit Request #</span>
                <span t-esc="state.visitRequest.visitRequestId"/>
@@ -31,10 +31,10 @@ odoo.define('visitation.visitationAppMain', function(require) {
 
       state = useState({
         steps: [
-          {key: 1, complete: true, last: false, first: true},
-          {key: 2, complete: false, last: false, first: false},
-          {key: 3, complete: false, last: false, first: false},
-          {key: 4, complete: false, last: true, first: false},
+          {key: 1, heading: "Where dos the resident that you would like to visit currently reside?", complete: true, last: false, first: true},
+          {key: 2, heading: "Who will be visiting?", complete: false, last: false, first: false},
+          {key: 3, heading: "When would you like to visit?", complete: false, last: false, first: false},
+          {key: 4, heading: "", complete: false, last: true, first: false},
         ],
         dataValues: {
           beds: [

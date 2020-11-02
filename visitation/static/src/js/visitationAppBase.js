@@ -9,14 +9,23 @@ odoo.define('visitation.visitationAppBase', function () {
       this.id = Math.floor(Math.random() * 10000);
       this.name = kwargs.name || "";
       this.email = kwargs.email || "";
+      this.street = kwargs.street || "";
+      this.city = kwargs.city || "";
+      this.stateId = kwargs.stateId || "";
+      this.stateName = kwargs.stateName || "";
+      this.zip = kwargs.zip || "";
       this.testDate = kwargs.testDate || undefined;
       this.primary = kwargs.primary || false;
     }
 
     isValid = () => {
       if ( !this.name ) { return false; }
+      if ( !this.email ) { return false; }
+      if ( !this.street ) { return false; }
+      if ( !this.city ) { return false; }
+      if ( !this.stateId ) { return false; }
+      if ( !this.zip ) { return false; }
       if ( !this.testDate instanceof Date || isNaN(this.testDate) ) { return false; }
-      if ( this.primary && !this.email ) { return false; }
       return true
     }
 
@@ -37,6 +46,12 @@ odoo.define('visitation.visitationAppBase', function () {
         primary: json.primary,
       };
       return new Visitor(kwargs);
+    }
+
+    static generatePrimaryVisitor = () => {
+      const visitor = new Visitor({});
+      visitor.primary = true;
+      return visitor;
     }
   }
 

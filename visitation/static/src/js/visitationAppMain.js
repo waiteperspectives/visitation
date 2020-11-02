@@ -53,6 +53,10 @@ odoo.define('visitation.visitationAppMain', function(require) {
               name: "Sat. 10/31: 9 - 10 AM",
             }
           ],
+          states: [
+            {id: 1, name: 'New York'},
+            {id: 2, name: 'Vermont'},
+          ]
         },
         visitRequest: {
           visitRequestId: "1234",

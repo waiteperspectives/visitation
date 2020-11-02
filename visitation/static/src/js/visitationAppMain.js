@@ -1,6 +1,7 @@
 odoo.define('visitation.visitationAppMain', function(require) {
   'use strict';
 
+  const { IO } = require('visitation.visitationAppIO');
   const { ResidentForm } = require('visitation.visitationAppResidentForm');
   const { VisitorForm } = require('visitation.visitationAppVisitorForm');
   const { SchedulingForm } = require('visitation.visitationAppSchedulingForm');
@@ -31,18 +32,14 @@ odoo.define('visitation.visitationAppMain', function(require) {
 
       state = useState({
         steps: [
-          {key: 1, heading: "Where dos the resident that you would like to visit currently reside?", complete: true, last: false, first: true},
+          {key: 1, heading: "Where will you be visiting?", complete: true, last: false, first: true},
           {key: 2, heading: "Who will be visiting?", complete: false, last: false, first: false},
           {key: 3, heading: "When would you like to visit?", complete: false, last: false, first: false},
           {key: 4, heading: "", complete: false, last: true, first: false},
         ],
         dataValues: {
-          beds: [
-            {id: 1, unit_id: [7, "A Wing"], room_id: [77, "123"], bed_id: [99, "1"]},
-            {id: 2, unit_id: [7, "A Wing"], room_id: [77, "123"], bed_id: [98, "2"]},
-            {id: 3, unit_id: [7, "A Wing"], room_id: [78, "456"], bed_id: [97, "1"]},
-            {id: 4, unit_id: [8, "B Wing"], room_id: [99, "456"], bed_id: [96, "1"]},
-          ],
+          beds: [],
+          states: [],
           availabilities: [
             {
               id: 1,
@@ -53,10 +50,6 @@ odoo.define('visitation.visitationAppMain', function(require) {
               name: "Sat. 10/31: 9 - 10 AM",
             }
           ],
-          states: [
-            {id: 1, name: 'New York'},
-            {id: 2, name: 'Vermont'},
-          ]
         },
         visitRequest: {
           visitRequestId: "1234",
@@ -69,6 +62,16 @@ odoo.define('visitation.visitationAppMain', function(require) {
           visitors: [],
       }
     });
+
+    willStart = async () => {
+      IO.mockFetchInitialLoad().then(rs => {
+        this.state.steps[0].heading = rs.visitRequest.heading1;
+        this.state.steps[1].heading = rs.visitRequest.heading2;
+        this.state.steps[2].heading = rs.visitRequest.heading3;
+        this.state.dataValues.beds = rs.visitRequest.beds;
+        this.state.dataValues.states = rs.visitRequest.states;
+      });
+    }
 
     addVisitor = (visitor) => {
       this.state.visitRequest.visitors.push(visitor);

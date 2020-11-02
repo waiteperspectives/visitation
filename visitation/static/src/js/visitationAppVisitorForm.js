@@ -97,6 +97,12 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
                 Add Visitor
               </button>
             </div>
+            <div t-if="state.visitors.length == 2" class="d-flex justify-content-start">
+              <button class="btn" type="button" t-on-click="removeLastVisitor">
+                <i class="fa fa-plus" />
+                Remove Visitor
+              </button>
+            </div>
            <div class="d-flex justify-content-between">
               <button type="button" t-on-click="previousStep" class="btn btn-outline-secondary">
                 <i class="fa fa-arrow-left" />
@@ -127,8 +133,10 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       this.state.visitors = newVisitors;
     }
 
-    deleteVisitor = (visitor) => {
-      this.state.visitors = this.state.visitors.filter(v => v.id !== visitor.id);
+    removeLastVisitor = () => {
+      if ( this.state.visitors.length > 0 ) {
+        this.state.visitors = this.state.visitors.slice(0, this.state.visitors.length - 1);
+      }
     }
 
     state = useState({

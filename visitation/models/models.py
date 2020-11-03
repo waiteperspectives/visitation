@@ -77,11 +77,26 @@ class AvailabilitySlot(models.Model):
 
 class Visitor(models.Model):
     _name = "visitor.visitor"
-    _inherit = "res.partner"
     _description = "visitor"
 
     name = fields.Char(required=True)
     email = fields.Char(required=True)
+    street = fields.Char()
+    street2 = fields.Char()
+    zip = fields.Char()
+    city = fields.Char()
+    state_id = fields.Many2one(
+        comodel_name="res.country.state",
+        string="State",
+        ondelete="restrict",
+        domain="[('country_id', '=?', country_id)]",
+    )
+    country_id = fields.Many2one(
+        comodel_name="res.country",
+        string="Country",
+        ondelete="restrict",
+    )
+    phone = fields.Char()
 
 
 class VisitorScreening(models.Model):

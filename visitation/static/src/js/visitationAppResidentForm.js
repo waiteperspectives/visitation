@@ -8,7 +8,7 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
   class ResidentForm extends StepForm {
     static template = xml`
       <div class="ResidentForm container mt-3">
-        <div class="row justify-content-center">
+        <div t-if="props.dataValues.beds.length" class="row justify-content-center">
           <form t-on-submit.prevent="nextStep" class="col-md-6">
             <h3><t t-esc="props.heading" /></h3>
             <div class="form-group">
@@ -60,6 +60,13 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
              </button>
            </div>
           </form>
+        </div>
+        <div t-if="!props.dataValues.beds.length" class="row justify-content-center">
+          <div class="row">
+            <div class="alert alert-danger" role="alert">
+              <h1>Visitation is currently not open</h1>
+            </div>
+          </div>
         </div>
       </div>
     `;

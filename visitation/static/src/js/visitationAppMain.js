@@ -1,7 +1,7 @@
 odoo.define('visitation.visitationAppMain', function(require) {
   'use strict';
 
-  const { IO } = require('visitation.visitationAppIO');
+  const { IO, OdooSession } = require('visitation.visitationAppIO');
   const { ResidentForm } = require('visitation.visitationAppResidentForm');
   const { VisitorForm } = require('visitation.visitationAppVisitorForm');
   const { SchedulingForm } = require('visitation.visitationAppSchedulingForm');
@@ -64,23 +64,30 @@ odoo.define('visitation.visitationAppMain', function(require) {
     });
 
     willStart = async () => {
+      const session = new OdooSession(this.env.rpc_config.host, this.env.rpc_config.port, this.env.rpc_config.db, this.env.rpc_config.login, this.env.rpc_config.login);
+      await session.ensure_login();
+
       // must wait for step 1
-      await IO.fetchBeds().then(rs => {
-        rs.forEach(bed => {
+      await IO.fetchBeds(session).then(rs => {
+        const self = this;
+        rs.data.result.forEach(bed => {
           bed.bed_id = [bed.id, bed.bed_position];
+          self.state.dataValues.beds = rs.data.result;
         });
-        this.state.dataValues.beds = rs;
       });
 
-      await IO.fetchContent().then(rs => {
-        const get = (key) => { return rs.find(rec => rec.key === key).value };
-        this.state.steps[0].heading = get('heading1');
-        this.state.steps[1].heading = get('heading2');
-        this.state.steps[2].heading = get('heading3') ;
+      await IO.fetchContent(session).then(x => {
+        const rs = x.data.result;
+        if ( rs.length ) {
+          const get = (key) => { return rs.find(rec => rec.key === key).value };
+          this.state.steps[0].heading = get('heading1');
+          this.state.steps[1].heading = get('heading2');
+          this.state.steps[2].heading = get('heading3') ;
+        }
       });
 
-      IO.fetchStates().then(rs => {
-        this.state.dataValues.states = rs;
+      IO.fetchStates(session).then(rs => {
+        this.state.dataValues.states = rs.data.result;
       });
     }
 

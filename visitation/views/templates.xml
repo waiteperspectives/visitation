@@ -2,10 +2,19 @@
 <odoo>
   <data>
 
+    <template id="frontend_layout" inherit_id="web.frontend_layout">
+      <xpath expr="//head/script" position="after">
+        <script type="text/javascript">
+            odoo.public_rpc_user = <t t-raw="json.dumps({'user_id': request.env.ref('visitation.public_rpc_user').id})" />
+        </script>
+      </xpath>
+    </template>
+
     <template id="homepage" inherit_id="website.homepage">
       <xpath expr="//div[@id='wrap']" position="replace">
         <div id="wrap">
           <div id="preWrap" class="oe_structure" />
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
           <div id="visitationAppRoot" />
           <div id="postWrap" class="oe_structure" />
         </div>

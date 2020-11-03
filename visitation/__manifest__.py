@@ -8,6 +8,7 @@
         "website",
     ],
     "data": [
+        "data/rpc_user.xml",
         "security/ir.model.access.csv",
         "views/assets.xml",
         "views/views.xml",

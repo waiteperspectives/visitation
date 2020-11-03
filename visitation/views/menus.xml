@@ -45,9 +45,16 @@
       />
 
     <menuitem
-        id="menu_visitation_patient_room"
-        name="Rooms"
-        action="action_patient_room"
+        id="menu_visitation_resident_bed"
+        name="Beds"
+        action="action_resident_bed"
+        parent="menu_visitation_root"
+      />
+
+    <menuitem
+        id="menu_visitation_content"
+        name="Content"
+        action="action_visitation_content"
         parent="menu_visitation_root"
       />
 

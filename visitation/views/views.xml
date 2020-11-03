@@ -2,12 +2,36 @@
 <odoo>
   <data>
 
-    <record id="view_patient_room_tree" model="ir.ui.view">
-      <field name="name">view_patient_room_tree</field>
-      <field name="model">patient.room</field>
+    <record id="view_visitation_content_tree" model="ir.ui.view">
+      <field name="name">view_visitation_content_tree</field>
+      <field name="model">visitation.content</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="key" />
+          <field name="value" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_resident_room_tree" model="ir.ui.view">
+      <field name="name">view_resident_room_tree</field>
+      <field name="model">resident.room</field>
       <field name="arch" type="xml">
         <tree editable="bottom">
-          <field name="room_number" />
+          <field name="name" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_resident_bed_tree" model="ir.ui.view">
+      <field name="name">view_resident_bed_tree</field>
+      <field name="model">resident.bed</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="unit_id" />
+          <field name="room_id" />
+          <field name="bed_position" />
         </tree>
       </field>
     </record>

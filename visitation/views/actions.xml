@@ -2,9 +2,15 @@
 <odoo>
   <data>
 
-    <record id="action_patient_room" model="ir.actions.act_window">
-      <field name="name">Rooms</field>
-      <field name="res_model">patient.room</field>
+    <record id="action_visitation_content" model="ir.actions.act_window">
+      <field name="name">Content</field>
+      <field name="res_model">visitation.content</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_resident_bed" model="ir.actions.act_window">
+      <field name="name">Beds</field>
+      <field name="res_model">resident.bed</field>
       <field name="view_mode">tree,form</field>
     </record>
 

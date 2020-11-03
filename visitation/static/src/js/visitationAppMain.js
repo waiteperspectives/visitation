@@ -64,12 +64,23 @@ odoo.define('visitation.visitationAppMain', function(require) {
     });
 
     willStart = async () => {
-      IO.mockFetchInitialLoad().then(rs => {
-        this.state.steps[0].heading = rs.visitRequest.heading1;
-        this.state.steps[1].heading = rs.visitRequest.heading2;
-        this.state.steps[2].heading = rs.visitRequest.heading3;
-        this.state.dataValues.beds = rs.visitRequest.beds;
-        this.state.dataValues.states = rs.visitRequest.states;
+      // must wait for step 1
+      await IO.fetchBeds().then(rs => {
+        rs.forEach(bed => {
+          bed.bed_id = [bed.id, bed.bed_position];
+        });
+        this.state.dataValues.beds = rs;
+      });
+
+      await IO.fetchContent().then(rs => {
+        const get = (key) => { return rs.find(rec => rec.key === key).value };
+        this.state.steps[0].heading = get('heading1');
+        this.state.steps[1].heading = get('heading2');
+        this.state.steps[2].heading = get('heading3') ;
+      });
+
+      IO.fetchStates().then(rs => {
+        this.state.dataValues.states = rs;
       });
     }
 

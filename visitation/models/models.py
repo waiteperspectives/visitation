@@ -2,12 +2,55 @@ import datetime
 from odoo import models, fields, api, _
 
 # entities
-class PatientRoom(models.Model):
-    _name = "patient.room"
-    _description = "Patient Room"
-    _record_name = "room_number"
+class VisitationContent(models.Model):
+    _name = "visitation.content"
+    _description = "CMS - Visitation Content"
+    _rec_name = "key"
 
-    room_number = fields.Char(string="Room Number")
+    key = fields.Char(required=True)
+    value = fields.Text(required=True)
+
+
+class ResidentUnit(models.Model):
+    _name = "resident.unit"
+    _description = "Resident Unit"
+
+    name = fields.Char(required=True, string="Unit Name")
+    active = fields.Boolean(default=True)
+
+
+class ResidentRoom(models.Model):
+    _name = "resident.room"
+    _description = "Resident Room"
+
+    name = fields.Char(string="Room Number")
+    active = fields.Boolean(default=True)
+
+
+class ResidentBed(models.Model):
+    _name = "resident.bed"
+    _description = "Resident Bed Position"
+
+    name = fields.Char(compute="_compute_name")
+    active = fields.Boolean(default=True)
+    bed_position = fields.Selection(
+        [
+            ("left", "Left"),
+            ("right", "Right"),
+        ],
+        required=True,
+    )
+
+    unit_id = fields.Many2one(comodel_name="resident.unit", required=True)
+    room_id = fields.Many2one(comodel_name="resident.room", required=True)
+
+    def _compute_name(self):
+        for record in self:
+            record.name = "%s - %s - %s" % (
+                record.unit_id.name,
+                record.room_id.name,
+                dict(record._fields["bed_position"].selection).get(record.bed_position),
+            )
 
 
 class AvailabilitySlot(models.Model):
@@ -34,6 +77,7 @@ class AvailabilitySlot(models.Model):
 
 class Visitor(models.Model):
     _name = "visitor.visitor"
+    _inherit = "res.partner"
     _description = "visitor"
 
     name = fields.Char(required=True)

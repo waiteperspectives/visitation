@@ -1,8 +1,11 @@
 odoo.define('visitation.visitationAppIO', function(require) {
   'use strict';
 
+  const rpc = require('web.rpc');
+
   class IO {
 
+    // from web.ServicesMixin
     static mockFetchInitialLoad = () => {
       return new Promise(resolve => {
         const mockData = {
@@ -16,15 +19,36 @@ odoo.define('visitation.visitationAppIO', function(require) {
               {id: 3, unit_id: [7, "A Wing"], room_id: [78, "456"], bed_id: [97, "1"]},
               {id: 4, unit_id: [8, "B Wing"], room_id: [99, "456"], bed_id: [96, "1"]},
             ],
-            states: [
-              {id: 1, name: 'New York'},
-              {id: 2, name: 'Vermont'},
-            ]
           }
         };
         resolve(mockData);
       });
     }
+
+    static fetchStates = () => {
+      return rpc.query({
+        model: "res.country.state",
+        method: "search_read",
+        args: [[['country_id', '=', 233]], ["id", "name"]]
+      });
+    }
+
+    static fetchBeds = () => {
+      return rpc.query({
+        model: "resident.bed",
+        method: "search_read",
+        args: [[], ["id", "unit_id", "room_id", "bed_position"]]
+      });
+    }
+
+    static fetchContent = () => {
+      return rpc.query({
+        model: "visitation.content",
+        method: "search_read",
+        args: [[], ['key', 'value']]
+      });
+    }
+
   }
 
 

@@ -9,6 +9,7 @@
     ],
     "data": [
         "data/rpc_user.xml",
+        "data/automated_actions.xml",
         "security/ir.model.access.csv",
         "views/assets.xml",
         "views/views.xml",

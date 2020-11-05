@@ -102,12 +102,25 @@ class ScheduledVisit(models.Model):
     _name = "scheduled.visit"
     _description = "Scheduled visit"
 
+    name = fields.Char(compute="_compute_name")
     visit_availability_slot_id = fields.Many2one(
         comodel_name="availability.slot", required=True
     )
     visitor_screening_ids = fields.Many2one(
         comodel_name="visitor.screening", required=True
     )
+
+    def _compute_name(self):
+        for record in self:
+            if len(record.visitor_screening_ids) == 1:
+                suffix = " visitor"
+            else:
+                suffix = " visitors"
+            visitor_count_message = str(len(record.visitor_screening_ids)) + suffix
+            record.name = "%s: %s" % (
+                visitor_count_message,
+                record.visit_availability_slot_id.name,
+            )
 
 
 # usecase

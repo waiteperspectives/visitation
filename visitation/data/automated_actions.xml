@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+
+    <record id="action_auto_set_scheduled_visit" model="base.automation">
+        <field name="name">Visitation: Create a scheduled visit based on requested visit slot</field>
+        <field name="active" eval="True"/>
+        <field name="model_id" ref="visitation.model_visit_request"/>
+        <field name="state">code</field>
+        <field name="code">
+for rec in records:
+  rec['scheduled_visit_id'] = rec.requested_availability_id
+        </field>
+        <field name="trigger">on_create_or_write</field>
+        <field name="trigger_field_ids" eval="[(4, ref('visitation.field_visit_request__requested_availability_id'))]" />
+        <field name="filter_domain"></field>
+    </record>
+    
+  </data>
+</odoo>

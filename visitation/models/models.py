@@ -66,11 +66,9 @@ class AvailabilitySlot(models.Model):
         for record in self:
             record.name = "%s - %s" % (
                 datetime.datetime.strftime(
-                    record.availability_start_time, "%Y-%m-%d %H:%M"
+                    record.availability_start_time, "%b %d (%-I:%M %p"
                 ),
-                datetime.datetime.strftime(
-                    record.availability_end_time, "%Y-%m-%d %H:%M"
-                ),
+                datetime.datetime.strftime(record.availability_end_time, "%-I:%M %p)"),
             )
         return True
 

@@ -75,13 +75,16 @@
       <field name="name">view_visit_request_tree</field>
       <field name="model">visit.request</field>
       <field name="arch" type="xml">
-        <tree editable="bottom">
+        <tree editable="bottom"
+          decoration-success="scheduled_visit_id != False"
+          >
           <field name="id" />
           <field name="create_date" />
           <field name="write_date" />
           <field name="resident_bed_id" />
           <field name="screening_ids" widget="many2many_tags" />
-          <field name="availability_ids" widget="many2many_tags" />
+          <field name="availability_ids" widget="many2many_tags" groups="base.group_no_one" />
+          <field name="requested_availability_id" />
           <field name="scheduled_visit_id" />
         </tree>
       </field>

@@ -12,18 +12,29 @@ odoo.define('visitation.visitationAppMain', function(require) {
 
 
   class VisitationApp extends Component {
+      constructor(parent, props) {
+        super(parent, props);
+        this.session = new OdooSession(
+          props.rpc_config.host,
+          props.rpc_config.port,
+          props.rpc_config.db,
+          props.rpc_config.login,
+          props.rpc_config.login
+        );
+      }
+
       static template = xml`
-          <div class="VisitationApp container">
+          <div class="VisitationApp container pt-2">
              <Stepper steps="state.steps" />
-             <ResidentForm init="state.visitRequest" dataValues="state.dataValues" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 0" heading="state.steps[0].heading" />
-             <VisitorForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="screeningFormSubmit" t-if="getCurrentIndex() === 1" heading="state.steps[1].heading" />
-             <SchedulingForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 2" heading="state.steps[2].heading" />
-             <ResultsForm init="{visitRequest: state.visitRequest, availabilities: state.dataValues.availabilities}" previousStep="stepBackward" t-if="getCurrentIndex() === 3" heading="state.steps[3].heading" />
+             <ResidentForm init="state.visitRequest" dataValues="state.dataValues" nextStep="residentFormSubmit" t-if="getCurrentIndex() === 0" heading="state.steps[0].heading" />
+             <VisitorForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="visitorFormSubmit" t-if="getCurrentIndex() === 1" heading="state.steps[1].heading" />
+             <SchedulingForm init="{visitRequest: state.visitRequest}" availabilities="state.dataValues.availabilities" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 2" heading="state.steps[2].heading" />
+             <ResultsForm init="{visitRequest: state.visitRequest}" availabilities="state.dataValues.availabilities" previousStep="stepBackward" t-if="getCurrentIndex() === 3" heading="state.steps[3].heading" />
              <p class="text-muted">
                <span>Visit Request #</span>
                <span t-esc="state.visitRequest.visitRequestId"/>
                <span class="pr-1" />
-               <span t-esc="state.visitRequest.visitRequestDate.toLocaleDateString()"/>
+               <span t-esc="state.visitRequestDate.toLocaleDateString()"/>
              </p>
           </div>
       `;
@@ -40,35 +51,29 @@ odoo.define('visitation.visitationAppMain', function(require) {
         dataValues: {
           beds: [],
           states: [],
-          availabilities: [
-            {
-              id: 1,
-              name: "Sat. 10/31: 8 - 9 AM",
-            },
-            {
-              id: 2,
-              name: "Sat. 10/31: 9 - 10 AM",
-            }
-          ],
+          availabilities: [],
         },
+        visitRequestDate: new Date(),
         visitRequest: {
-          visitRequestId: "1234",
-          visitRequestDate: new Date(),
+          visitRequestId: undefined,
           visitConfirmationMessage: "A confirmation email has been sent to your email. Please call us if you unable to make your visit",
           residentRoom: "",
           residentUnit: "",
           residentBed: "",
-          visitRequestSlot: 0,
+          availabilitySlot: undefined,
           visitors: [],
       }
     });
 
     willStart = async () => {
-      const session = new OdooSession(this.env.rpc_config.host, this.env.rpc_config.port, this.env.rpc_config.db, this.env.rpc_config.login, this.env.rpc_config.login);
-      await session.ensure_login();
+      await this.session.ensure_login();
+
+      await IO.createVisitRequest(this.session, {}).then(rs => {
+        this.state.visitRequest.visitRequestId = rs.data.result;
+      });
 
       // must wait for step 1
-      await IO.fetchBeds(session).then(rs => {
+      await IO.fetchBeds(this.session).then(rs => {
         const self = this;
         rs.data.result.forEach(bed => {
           bed.bed_id = [bed.id, bed.bed_position];
@@ -76,7 +81,7 @@ odoo.define('visitation.visitationAppMain', function(require) {
         });
       });
 
-      await IO.fetchContent(session).then(x => {
+      await IO.fetchContent(this.session).then(x => {
         const rs = x.data.result;
         if ( rs.length ) {
           const get = (key) => { return rs.find(rec => rec.key === key).value };
@@ -86,7 +91,7 @@ odoo.define('visitation.visitationAppMain', function(require) {
         }
       });
 
-      IO.fetchStates(session).then(rs => {
+      IO.fetchStates(this.session).then(rs => {
         this.state.dataValues.states = rs.data.result;
       });
     }
@@ -139,21 +144,55 @@ odoo.define('visitation.visitationAppMain', function(require) {
       this.updateCompletionStatus(prior);
     }
 
-    screeningFormSubmit = (vals) => {
+    residentFormSubmit = (vals) => {
       Object.assign(this.state.visitRequest, vals);
-      this.stepForward();
+      IO.updateVisitRequest(
+        this.session, 
+        this.state.visitRequest.visitRequestId,
+        {'resident_bed_id': this.state.visitRequest.residentBed}
+      ).then(() => {
+        this.stepForward();
+      });
+    }
+
+    visitorFormSubmit = (vals) => {
+      const self = this;
+      Object.assign(this.state.visitRequest, vals);
+      const newScreenings = this.state.visitRequest.visitors.map(visitor => {
+            return [0, 0, {
+              name: visitor.name,
+              email: visitor.email,
+              street: visitor.street,
+              city: visitor.city,
+              state_id: visitor.stateId,
+              test_date: visitor.testDate,
+            }]
+          })
+      newScreenings.unshift([6, 0, []]);
+      IO.updateVisitRequest(
+        this.session, 
+        this.state.visitRequest.visitRequestId,
+        {'screening_ids': newScreenings}
+      ).then(() => {
+        IO.fetchAvailabilities(
+          this.session,
+          this.state.visitRequest.visitRequestId
+        ).then(rs => {
+          self.state.dataValues.availabilities = rs.data.result;
+        });
+        this.stepForward();
+      });
     }
 
     schedulingFormSubmit = (vals) => {
       Object.assign(this.state.visitRequest, vals);
-      this.stepForward();
-      //this.rpc({
-      //  model: "res.partner",
-      //  method: "search",
-      //  args: [[]],
-      //}).then(rs => {
-      //  console.log(rs);
-      //});
+      IO.updateVisitRequest(
+        this.session, 
+        this.state.visitRequest.visitRequestId,
+        {'requested_availability_id': this.state.visitRequest.availabilitySlot}
+      ).then(() => {
+        this.stepForward();
+      });
     }
 
   }

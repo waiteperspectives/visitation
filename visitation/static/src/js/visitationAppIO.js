@@ -80,21 +80,77 @@ odoo.define('visitation.visitationAppIO', function(require) {
       };
       return axios.post(this.url, rpcArgs);
     }
+
+    write = async (model, id, vals) => {
+      await this.ensure_login();
+      const args = [id];
+      const _vals = vals || {};
+      args.push(_vals);
+      const kwargs = {};
+      const params = {
+        "service": "object",
+        "method": "execute_kw",
+        "args": [this.db, this.uid, this.password, model, "write", args, kwargs]
+      };
+      const rpcArgs = {
+        "jsonrpc": "2.0",
+        "method": "call",
+        "params": params,
+        "id": Math.floor(Math.random() * 100000),
+        "withCredentials": true,
+      };
+      return axios.post(this.url, rpcArgs);
+    }
+
+    create = async (model, vals) => {
+      await this.ensure_login();
+      const args = [];
+      const _vals = vals || {};
+      args.push(_vals);
+      const kwargs = {};
+      const params = {
+        "service": "object",
+        "method": "execute_kw",
+        "args": [this.db, this.uid, this.password, model, "create", args, kwargs]
+      };
+      const rpcArgs = {
+        "jsonrpc": "2.0",
+        "method": "call",
+        "params": params,
+        "id": Math.floor(Math.random() * 100000),
+        "withCredentials": true,
+      };
+      return axios.post(this.url, rpcArgs);
+    }
   }
 
   class IO {
 
-    static fetchStates = (session) => {
+    static fetchStates = async (session) => {
       return session.searchRead('res.country.state', [['country_id', '=', 233]], ["id", "name"]);
     }
 
-    static fetchBeds = (session) => {
+    static fetchBeds = async (session) => {
       return session.searchRead('resident.bed', [], ["id", "unit_id", "room_id", "bed_position"]);
     }
 
-    static fetchContent = (session) => {
+    static fetchContent = async (session) => {
       return session.searchRead('visitation.content', [], ["key", "value"]);
     }
+
+    static fetchAvailabilities = async (session, id) => {
+      const visitRequestRaw = await session.searchRead('visit.request', [['id', '=', id]], ['availability_ids']);
+      const visitRequestAvailabilityIds = visitRequestRaw.data.result[0].availability_ids;
+      return session.searchRead('availability.slot', [['id', 'in', visitRequestAvailabilityIds]], ['id', 'name']);
+    }
+
+    static createVisitRequest = async (session) => {
+      return session.create('visit.request', {});
+    }
+
+    static updateVisitRequest = async (session, id, vals) => {
+      return session.write('visit.request', id, vals);
+    };
 
   }
 

@@ -12,11 +12,11 @@ odoo.define('visitation.visitationAppSchedulingForm', function(require) {
           <form t-on-submit.prevent="nextStep" class="col-md-6">
             <h3><t t-esc="props.heading" /></h3>
             <div class="form-group">
-              <label for="visitRequestSlot">Time Slot</label>
-              <select id="visitRequestSlot" class="form-control" t-model="state.visitRequestSlot">
-                <option value="" selected="1" disabled="1" hidden="1">Choose Time Slot</option>
-                <t t-foreach="props.init.availabilities" t-as="availability">
-                  <t t-if="availability.id === state.visitRequestSlot">
+              <label for="availabilitySlot">Time Slot</label>
+              <select id="availabilitySlot" class="form-control" t-on-change="availabilitySlotChanged">
+                <option value="" selected="1" disabled="1">Choose Time Slot</option>
+                <t t-foreach="props.availabilities" t-as="availability">
+                  <t t-if="availability.id === state.availabilitySlot">
                     <option t-att-value="availability.id" selected="1">
                       <t t-esc="availability.name" />
                     </option>
@@ -45,12 +45,16 @@ odoo.define('visitation.visitationAppSchedulingForm', function(require) {
     `;
 
     state = useState({
-      visitRequestSlot: this.props.init.visitRequest.visitRequestSlot,
+      availabilitySlot: this.props.init.visitRequest.availabilitySlot,
     });
 
     validForm() {
-      if ( !this.state.visitRequestSlot ) { return false; }
+      if ( !this.state.availabilitySlot ) { return false; }
       return true;
+    }
+
+    availabilitySlotChanged = (e) => {
+      this.state.availabilitySlot = parseInt(e.target.value);
     }
 
   }

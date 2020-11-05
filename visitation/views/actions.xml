@@ -20,12 +20,6 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-    <record id="action_visitor_visitor" model="ir.actions.act_window">
-      <field name="name">Visitors</field>
-      <field name="res_model">visitor.visitor</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
     <record id="action_visitor_screening" model="ir.actions.act_window">
       <field name="name">Visitor Screening</field>
       <field name="res_model">visitor.screening</field>

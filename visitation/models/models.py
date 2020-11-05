@@ -75,9 +75,9 @@ class AvailabilitySlot(models.Model):
         return True
 
 
-class Visitor(models.Model):
-    _name = "visitor.visitor"
-    _description = "visitor"
+class VisitorScreening(models.Model):
+    _name = "visitor.screening"
+    _description = "Visitor screening"
 
     name = fields.Char(required=True)
     email = fields.Char(required=True)
@@ -97,14 +97,7 @@ class Visitor(models.Model):
         ondelete="restrict",
     )
     phone = fields.Char()
-
-
-class VisitorScreening(models.Model):
-    _name = "visitor.screening"
-    _description = "Test result history"
-
-    visitor_id = fields.Many2one(comodel_name="visitor.visitor", required=True)
-    visitor_test_date = fields.Date(required=True)
+    test_date = fields.Date(required=True)
 
 
 class ScheduledVisit(models.Model):
@@ -114,7 +107,9 @@ class ScheduledVisit(models.Model):
     visit_availability_slot_id = fields.Many2one(
         comodel_name="availability.slot", required=True
     )
-    visitor_id = fields.Many2one(comodel_name="visitor.visitor", required=True)
+    visitor_screening_ids = fields.Many2one(
+        comodel_name="visitor.screening", required=True
+    )
 
 
 # usecase
@@ -122,18 +117,26 @@ class VisitRequest(models.Model):
     _name = "visit.request"
     _description = "Visit Request"
 
-    visitor_name = fields.Char(required=True)
-    visitor_email = fields.Char(required=True)
-    visitor_test_date = fields.Date(required=True)
-    visit_room_id = fields.Many2one(comodel_name="patient.room", required=True)
+    # 1. request created on page load, id sent to frontend
+    # 2. set resident_bed_id
+    # 3. set screening_ids
+    # 4. computed availability_ids are queried by frontend
+    # 5. set requested_availability_id
+    # 6. auto-action sets scheduled_visit_id
+    # 7. cron auto-vaccuum empty requests periodically
 
-    visitor_id = fields.Many2one(comodel_name="visitor.visitor")
-    screening_id = fields.Many2one(comodel_name="visitor.screening")
+    resident_bed_id = fields.Many2one(comodel_name="resident.room")
 
+    # front end writes screenings, auto-action builds visitors
+    screening_ids = fields.Many2many(comodel_name="visitor.screening")
+
+    # derived on bed and screenings submitted
     availability_ids = fields.Many2many(
         comodel_name="availability.slot",
         compute="_compute_availability_ids",
     )
+
+    requested_availability_id = fields.Many2one(comodel_name="availability.slot")
 
     scheduled_visit_id = fields.Many2one(comodel_name="scheduled.visit")
 

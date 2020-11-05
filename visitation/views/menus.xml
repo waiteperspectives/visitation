@@ -38,13 +38,6 @@
       />
 
     <menuitem
-        id="menu_visitation_visitor_visitor"
-        name="Visitors"
-        action="action_visitor_visitor"
-        parent="menu_visitation_root"
-      />
-
-    <menuitem
         id="menu_visitation_resident_bed"
         name="Beds"
         action="action_resident_bed"

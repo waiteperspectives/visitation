@@ -2,6 +2,7 @@ odoo.define('visitation.visitationApp', function(require) {
   'use strict';
 
   const { VisitationApp } = require('visitation.visitationAppMain');
+
   const RPC_CONFIG = {
     host: "localhost",
     port: "8069",
@@ -26,8 +27,7 @@ odoo.define('visitation.visitationApp', function(require) {
   Object.keys(apps).forEach(anchorId => {
     const anchor = document.getElementById(anchorId);
     if ( anchor ) {
-      const app = new apps[anchorId]();
-      app.env.rpc_config = RPC_CONFIG;
+      const app = new apps[anchorId](null, {rpc_config: RPC_CONFIG});
       app.mount(anchor);
 
       // remove the app when you are using the website editor, else it will be copied

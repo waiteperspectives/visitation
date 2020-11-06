@@ -25,6 +25,9 @@ odoo.define('visitation.visitationAppMain', function(require) {
 
       static template = xml`
           <div class="VisitationApp container pt-2">
+             <div t-if="state.notification" class="alert alert-danger">
+               <p t-esc="state.notification" />
+             </div>
              <Stepper steps="state.steps" />
              <ResidentForm init="state.visitRequest" dataValues="state.dataValues" nextStep="residentFormSubmit" t-if="getCurrentIndex() === 0" heading="state.steps[0].heading" />
              <VisitorForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="visitorFormSubmit" t-if="getCurrentIndex() === 1" heading="state.steps[1].heading" />
@@ -42,6 +45,7 @@ odoo.define('visitation.visitationAppMain', function(require) {
       static components = { Stepper, ResidentForm, VisitorForm, SchedulingForm, ResultsForm };
 
       state = useState({
+        notification: undefined,
         steps: [
           {key: 1, heading: "", complete: true, last: false, first: true},
           {key: 2, heading: "", complete: false, last: false, first: false},
@@ -108,6 +112,13 @@ odoo.define('visitation.visitationAppMain', function(require) {
       });
     }
 
+    notify = (message) => {
+      this.state.notification = message;
+      setTimeout(() => {
+        this.state.notification = undefined;
+      }, 2000);
+    }
+
     addVisitor = (visitor) => {
       this.state.visitRequest.visitors.push(visitor);
     }
@@ -164,6 +175,8 @@ odoo.define('visitation.visitationAppMain', function(require) {
         {'resident_bed_id': this.state.visitRequest.residentBed}
       ).then(() => {
         this.stepForward();
+      }).catch(err => {
+        this.notify(err);
       });
     }
 
@@ -191,8 +204,12 @@ odoo.define('visitation.visitationAppMain', function(require) {
           this.state.visitRequest.visitRequestId
         ).then(rs => {
           self.state.dataValues.availabilities = rs.data.result;
+          this.stepForward();
+        }).catch(err => {
+          this.notify(err);
         });
-        this.stepForward();
+      }).catch(err => {
+        this.notify(err);
       });
     }
 
@@ -204,6 +221,8 @@ odoo.define('visitation.visitationAppMain', function(require) {
         {'requested_availability_id': this.state.visitRequest.availabilitySlot}
       ).then(() => {
         this.stepForward();
+      }).catch(err => {
+        this.notify(err);
       });
     }
 

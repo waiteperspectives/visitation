@@ -63,8 +63,8 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
         </div>
         <div t-if="!props.dataValues.beds.length" class="row justify-content-center">
           <div class="row">
-            <div class="alert alert-danger" role="alert">
-              <h1>Visitation is currently not open</h1>
+            <div class="alert alert-info" role="alert">
+              <h1><t t-esc="props.dataValues.messages.visitationNotOpen" /></h1>
             </div>
           </div>
         </div>

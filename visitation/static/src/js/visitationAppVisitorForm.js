@@ -91,14 +91,14 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <VisitorCard visitor="visitor" update="updateVisitor" states="props.dataValues.states" />
             </t>
-            <div t-if="state.visitors.length &lt; 2" class="d-flex justify-content-start">
-              <button class="btn" type="button" t-on-click="addVisitor">
+            <div t-if="state.visitors.length &lt; 2" class="d-flex justify-content-start mb-2">
+              <button class="btn btn-link" type="button" t-on-click="addVisitor">
                 <i class="fa fa-plus" />
                 Add Visitor
               </button>
             </div>
             <div t-if="state.visitors.length == 2" class="d-flex justify-content-start">
-              <button class="btn" type="button" t-on-click="removeLastVisitor">
+              <button class="btn btn-link" type="button" t-on-click="removeLastVisitor">
                 <i class="fa fa-plus" />
                 Remove Visitor
               </button>

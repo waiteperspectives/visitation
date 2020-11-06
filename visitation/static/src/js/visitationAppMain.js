@@ -28,8 +28,8 @@ odoo.define('visitation.visitationAppMain', function(require) {
              <Stepper steps="state.steps" />
              <ResidentForm init="state.visitRequest" dataValues="state.dataValues" nextStep="residentFormSubmit" t-if="getCurrentIndex() === 0" heading="state.steps[0].heading" />
              <VisitorForm init="state.visitRequest" dataValues="state.dataValues" addVisitor="addVisitor" previousStep="stepBackward" nextStep="visitorFormSubmit" t-if="getCurrentIndex() === 1" heading="state.steps[1].heading" />
-             <SchedulingForm init="{visitRequest: state.visitRequest}" availabilities="state.dataValues.availabilities" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 2" heading="state.steps[2].heading" />
-             <ResultsForm init="{visitRequest: state.visitRequest}" availabilities="state.dataValues.availabilities" previousStep="stepBackward" t-if="getCurrentIndex() === 3" heading="state.steps[3].heading" />
+             <SchedulingForm init="{visitRequest: state.visitRequest}" dataValues="state.dataValues" availabilities="state.dataValues.availabilities" nextStep="schedulingFormSubmit" previousStep="stepBackward" t-if="getCurrentIndex() === 2" heading="state.steps[2].heading" />
+             <ResultsForm init="{visitRequest: state.visitRequest}" dataValues="state.dataValues" availabilities="state.dataValues.availabilities" previousStep="stepBackward" t-if="getCurrentIndex() === 3" heading="state.steps[3].heading" />
              <p class="text-muted">
                <span>Visit Request #</span>
                <span t-esc="state.visitRequest.visitRequestId"/>
@@ -43,20 +43,24 @@ odoo.define('visitation.visitationAppMain', function(require) {
 
       state = useState({
         steps: [
-          {key: 1, heading: "Where will you be visiting?", complete: true, last: false, first: true},
-          {key: 2, heading: "Who will be visiting?", complete: false, last: false, first: false},
-          {key: 3, heading: "When would you like to visit?", complete: false, last: false, first: false},
+          {key: 1, heading: "", complete: true, last: false, first: true},
+          {key: 2, heading: "", complete: false, last: false, first: false},
+          {key: 3, heading: "", complete: false, last: false, first: false},
           {key: 4, heading: "", complete: false, last: true, first: false},
         ],
         dataValues: {
           beds: [],
           states: [],
           availabilities: [],
+          messages: {
+            visitationNotOpen: "", 
+            noAvailability: "", 
+          },
         },
         visitRequestDate: new Date(),
         visitRequest: {
           visitRequestId: undefined,
-          visitConfirmationMessage: "A confirmation email has been sent to your email. Please call us if you unable to make your visit",
+          visitConfirmationMessage: "",
           residentRoom: "",
           residentUnit: "",
           residentBed: "",
@@ -83,12 +87,20 @@ odoo.define('visitation.visitationAppMain', function(require) {
 
       await IO.fetchContent(this.session).then(x => {
         const rs = x.data.result;
-        if ( rs.length ) {
-          const get = (key) => { return rs.find(rec => rec.key === key).value };
-          this.state.steps[0].heading = get('heading1');
-          this.state.steps[1].heading = get('heading2');
-          this.state.steps[2].heading = get('heading3') ;
-        }
+        const get = (key) => {
+          const found = rs.find(rec => rec.key === key);
+          if ( found ) {
+            return found.value
+          } else {
+            return undefined;
+          }
+        };
+        this.state.steps[0].heading = get('heading1') || "Where will you be visiting?";
+        this.state.steps[1].heading = get('heading2') || "Who will be visiting?";
+        this.state.steps[2].heading = get('heading3') || "When would you like to visit?";
+        this.state.dataValues.messages.noAvailability = get('noAvailability') || "We're sorry, given your request, we don't have any time slots that can accomodate you.";
+        this.state.dataValues.messages.visitationNotOpen = get('visitationNotOpen') || "We're sorry. Visitation is currently not open. Check back later.";
+        this.state.visitRequest.visitConfirmationMessage = get('visitConfirmationMessage') || "A confirmation email has been sent to your email. Please call us if you unable to make your visit."
       });
 
       IO.fetchStates(this.session).then(rs => {

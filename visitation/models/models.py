@@ -123,10 +123,10 @@ class ScheduledVisit(models.Model):
 
     name = fields.Char(compute="_compute_name")
     visit_availability_slot_id = fields.Many2one(
-        comodel_name="availability.slot", required=True
+        comodel_name="availability.slot", required=True, string="Time Slot"
     )
     visitor_screening_ids = fields.Many2many(
-        comodel_name="visitor.screening", required=True
+        comodel_name="visitor.screening", required=True, string="Visitors"
     )
     visit_request_id = fields.Many2one(comodel_name="visit.request")
 
@@ -148,14 +148,7 @@ class VisitRequest(models.Model):
     _name = "visit.request"
     _description = "Visit Request"
 
-    # 1. request created on page load, id sent to frontend
-    # 2. set resident_bed_id
-    # 3. set screening_ids
-    # 4. computed availability_ids are queried by frontend
-    # 5. set requested_availability_id
-    # 6. auto-action sets scheduled_visit_id
-    # 7. cron auto-vaccuum empty requests periodically
-
+    name = fields.Char(compute="_compute_name")
     resident_bed_id = fields.Many2one(comodel_name="resident.bed")
 
     # front end writes screenings, auto-action builds visitors
@@ -172,6 +165,13 @@ class VisitRequest(models.Model):
         comodel_name="availability.slot", string="Requested Slot"
     )
     scheduled_visit_id = fields.Many2one(comodel_name="scheduled.visit")
+
+    def _compute_name(self):
+        for record in self:
+            if record.id:
+                record.name = "Visit Request #%s" % record.id
+            else:
+                record.name = "New Visit Request"
 
     def _get_availability_ids(self):
         return self.env["availability.slot"].search(

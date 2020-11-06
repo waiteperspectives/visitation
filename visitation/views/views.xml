@@ -79,6 +79,7 @@
         <tree>
           <field name="visit_availability_slot_id" />
           <field name="visitor_screening_ids" widget="many2many_tags" />
+          <field name="visit_request_id" />
         </tree>
       </field>
     </record>

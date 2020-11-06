@@ -21,7 +21,7 @@
     </record>
 
     <record id="action_visitor_screening" model="ir.actions.act_window">
-      <field name="name">Visitor Screening</field>
+      <field name="name">Visitors</field>
       <field name="res_model">visitor.screening</field>
       <field name="view_mode">tree,form</field>
     </record>

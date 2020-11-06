@@ -137,7 +137,7 @@ class VisitRequest(models.Model):
     # 6. auto-action sets scheduled_visit_id
     # 7. cron auto-vaccuum empty requests periodically
 
-    resident_bed_id = fields.Many2one(comodel_name="resident.room")
+    resident_bed_id = fields.Many2one(comodel_name="resident.bed")
 
     # front end writes screenings, auto-action builds visitors
     screening_ids = fields.Many2many(comodel_name="visitor.screening")

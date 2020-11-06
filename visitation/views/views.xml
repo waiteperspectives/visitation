@@ -55,6 +55,14 @@
       <field name="model">visitor.screening</field>
       <field name="arch" type="xml">
         <tree editable="bottom">
+          <field name="name" />
+          <field name="street" />
+          <field name="street2" />
+          <field name="zip" />
+          <field name="city" />
+          <field name="state_id" />
+          <field name="country_id" />
+          <field name="phone" />
           <field name="test_date" />
         </tree>
       </field>
@@ -66,7 +74,7 @@
       <field name="arch" type="xml">
         <tree>
           <field name="visit_availability_slot_id" />
-          <field name="visitor_screening_ids" />
+          <field name="visitor_screening_ids" widget="many2many_tags" />
         </tree>
       </field>
     </record>
@@ -78,7 +86,7 @@
         <tree editable="bottom"
           decoration-success="scheduled_visit_id != False"
           >
-          <field name="id" />
+          <field name="id" groups="base.group_no_one" />
           <field name="create_date" />
           <field name="write_date" />
           <field name="resident_bed_id" />

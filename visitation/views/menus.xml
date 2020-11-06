@@ -10,45 +10,57 @@
       />
 
     <menuitem
-        id="menu_visitation_scheduled_visit"
-        name="Scheduled Visit"
-        action="action_scheduled_visit"
+        id="menu_visitation_availability"
+        name="Availability Slots"
+        action="action_availability_slot"
         parent="menu_visitation_root"
+        sequence="0"
       />
-    
+
     <menuitem
         id="menu_visitation_vist_request"
         name="Visit Requests"
         action="action_visit_request"
         parent="menu_visitation_root"
+        sequence="1"
       />
 
     <menuitem
-        id="menu_visitation_availability"
-        name="Availabilities"
-        action="action_availability_slot"
+        id="menu_visitation_scheduled_visit"
+        name="Scheduled Visits"
+        action="action_scheduled_visit"
         parent="menu_visitation_root"
+        sequence="2"
       />
 
     <menuitem
-        id="menu_visitation_visitor_screening"
-        name="Visitor Screening"
-        action="action_visitor_screening"
+        id="menu_visitation_config"
+        name="Configuration"
+        action=""
         parent="menu_visitation_root"
+        sequence="3"
       />
 
     <menuitem
         id="menu_visitation_resident_bed"
         name="Beds"
         action="action_resident_bed"
-        parent="menu_visitation_root"
+        parent="menu_visitation_config"
       />
 
     <menuitem
         id="menu_visitation_content"
         name="Content"
         action="action_visitation_content"
-        parent="menu_visitation_root"
+        parent="menu_visitation_config"
+      />
+
+    <menuitem
+        id="menu_visitation_visitor_screening"
+        name="Visitors"
+        action="action_visitor_screening"
+        parent="menu_visitation_config"
+        groups="base.group_no_one"
       />
 
   </data>

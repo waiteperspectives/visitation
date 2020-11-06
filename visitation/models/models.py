@@ -106,9 +106,10 @@ class ScheduledVisit(models.Model):
     visit_availability_slot_id = fields.Many2one(
         comodel_name="availability.slot", required=True
     )
-    visitor_screening_ids = fields.Many2one(
+    visitor_screening_ids = fields.Many2many(
         comodel_name="visitor.screening", required=True
     )
+    visit_request_id = fields.Many2one(comodel_name="visit.request")
 
     def _compute_name(self):
         for record in self:
@@ -146,9 +147,7 @@ class VisitRequest(models.Model):
         comodel_name="availability.slot",
         compute="_compute_availability_ids",
     )
-
     requested_availability_id = fields.Many2one(comodel_name="availability.slot")
-
     scheduled_visit_id = fields.Many2one(comodel_name="scheduled.visit")
 
     def _compute_availability_ids(self):

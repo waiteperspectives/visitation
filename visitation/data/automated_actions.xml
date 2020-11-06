@@ -8,11 +8,13 @@
         <field name="model_id" ref="visitation.model_visit_request"/>
         <field name="state">code</field>
         <field name="code">
-for rec in records:
-  rec['scheduled_visit_id'] = rec.requested_availability_id
+for rec in records.sudo():
+  if rec.requested_availability_id:
+    env['scheduled.visit'].search([('visit_request_id', '=', rec.id)]).unlink()
+    scheduled = env['scheduled.visit'].create({'visit_request_id': rec.id, 'visit_availability_slot_id': rec.requested_availability_id.id, 'visitor_screening_ids': rec.screening_ids.ids})
+    rec['scheduled_visit_id'] = scheduled.id
         </field>
-        <field name="trigger">on_create_or_write</field>
-        <field name="trigger_field_ids" eval="[(4, ref('visitation.field_visit_request__requested_availability_id'))]" />
+        <field name="trigger">on_write</field>
         <field name="filter_domain"></field>
     </record>
     

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+
+    <record id="unit_a" model="resident.unit">
+      <field name="name">A Wing</field>
+    </record>
+
+    <record id="unit_b" model="resident.unit">
+      <field name="name">B Wing</field>
+    </record>
+
+    <record id="room_1" model="resident.room">
+      <field name="name">1</field>
+    </record>
+
+    <record id="room_2" model="resident.room">
+      <field name="name">2</field>
+    </record>
+
+    <record id="room_3" model="resident.room">
+      <field name="name">3</field>
+    </record>
+
+    <record id="bed_a_1_left" model="resident.bed">
+      <field name="bed_position">left</field>
+      <field name="unit_id" ref="unit_a" />
+      <field name="room_id" ref="room_1" />
+    </record>
+
+    <record id="bed_a_1_right" model="resident.bed">
+      <field name="bed_position">right</field>
+      <field name="unit_id" ref="unit_a" />
+      <field name="room_id" ref="room_1" />
+    </record>
+
+    <record id="bed_a_1_left" model="resident.bed">
+      <field name="bed_position">left</field>
+      <field name="unit_id" ref="unit_a" />
+      <field name="room_id" ref="room_1" />
+    </record>
+
+    <record id="bed_a_1_right" model="resident.bed">
+      <field name="bed_position">right</field>
+      <field name="unit_id" ref="unit_a" />
+      <field name="room_id" ref="room_1" />
+    </record>
+
+    <record id="availability_1" model="availability.slot">
+      <field name="availability_start_time" eval="datetime.now()" />
+      <field name="availability_end_time" eval="datetime.now() + timedelta(hours=1)" />
+      <field name="capacity">5</field>
+    </record>
+
+  </data>
+</odoo>

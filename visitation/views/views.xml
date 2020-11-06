@@ -40,12 +40,16 @@
       <field name="name">view_availability_slot_tree</field>
       <field name="model">availability.slot</field>
       <field name="arch" type="xml">
-        <tree editable="bottom">
+        <tree editable="bottom"
+          decoration-success="remaining_capacity &gt; 0"
+          decoration-danger="remaining_capacity &lt; 1"
+          >
           <field name="availability_start_time" widget="daterange"
             options="{'related_end_date': 'availability_end_time'}"/>
           <field name="availability_end_time" widget="daterange"
             options="{'related_start_date': 'availability_start_time'}"/>
           <field name="capacity" />
+          <field name="remaining_capacity" />
         </tree>
       </field>
     </record>
@@ -87,13 +91,13 @@
           decoration-success="scheduled_visit_id != False"
           >
           <field name="id" groups="base.group_no_one" />
-          <field name="create_date" />
-          <field name="write_date" />
+          <field name="create_date" string="Request Created" />
+          <field name="write_date" string="Request Updated" />
           <field name="resident_bed_id" />
           <field name="screening_ids" widget="many2many_tags" />
-          <field name="availability_ids" widget="many2many_tags" groups="base.group_no_one" />
           <field name="requested_availability_id" />
-          <field name="scheduled_visit_id" />
+          <field name="scheduled_visit_id" string="Result" />
+          <field name="availability_ids" widget="many2many_tags" groups="base.group_no_one" />
         </tree>
       </field>
     </record>

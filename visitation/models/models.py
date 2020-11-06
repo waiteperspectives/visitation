@@ -62,6 +62,15 @@ class AvailabilitySlot(models.Model):
     availability_end_time = fields.Datetime(required=True)
     capacity = fields.Integer(default=0)
 
+    remaining_capacity = fields.Integer(
+        compute="_compute_remaining_capacity", store=True
+    )
+    scheduled_visit_ids = fields.One2many(
+        comodel_name="scheduled.visit",
+        inverse_name="visit_availability_slot_id",
+        readonly=True,
+    )
+
     def _compute_name(self):
         for record in self:
             record.name = "%s - %s" % (
@@ -69,6 +78,16 @@ class AvailabilitySlot(models.Model):
                     record.availability_start_time, "%b %d (%-I:%M %p"
                 ),
                 datetime.datetime.strftime(record.availability_end_time, "%-I:%M %p)"),
+            )
+        return True
+
+    @api.depends(
+        "capacity", "scheduled_visit_ids", "scheduled_visit_ids.visitor_screening_ids"
+    )
+    def _compute_remaining_capacity(self):
+        for record in self:
+            record.remaining_capacity = record.capacity - len(
+                record.scheduled_visit_ids.visitor_screening_ids
             )
         return True
 
@@ -140,19 +159,29 @@ class VisitRequest(models.Model):
     resident_bed_id = fields.Many2one(comodel_name="resident.bed")
 
     # front end writes screenings, auto-action builds visitors
-    screening_ids = fields.Many2many(comodel_name="visitor.screening")
+    screening_ids = fields.Many2many(
+        comodel_name="visitor.screening", string="Visitors"
+    )
 
     # derived on bed and screenings submitted
     availability_ids = fields.Many2many(
         comodel_name="availability.slot",
         compute="_compute_availability_ids",
     )
-    requested_availability_id = fields.Many2one(comodel_name="availability.slot")
+    requested_availability_id = fields.Many2one(
+        comodel_name="availability.slot", string="Requested Slot"
+    )
     scheduled_visit_id = fields.Many2one(comodel_name="scheduled.visit")
+
+    def _get_availability_ids(self):
+        return self.env["availability.slot"].search(
+            [
+                ("remaining_capacity", ">=", len(self.screening_ids)),
+            ]
+        )
 
     def _compute_availability_ids(self):
         # add better logic
-        all_availabilities = self.env["availability.slot"].search([])
         for record in self:
-            record.availability_ids = all_availabilities
+            record.availability_ids = record._get_availability_ids()
         return True

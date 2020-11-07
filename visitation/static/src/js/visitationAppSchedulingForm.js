@@ -12,11 +12,14 @@ odoo.define('visitation.visitationAppSchedulingForm', function(require) {
           <form t-on-submit.prevent="nextStep" class="col-md-6">
             <h3 t-if="props.availabilities.length"><t t-esc="props.heading" /></h3>
             <div t-if="props.availabilities.length" class="form-group">
-              <label for="availabilitySlot">Time Slot</label>
+              <label for="availabilitySlot">
+                Time Slot
+                <span class="text-danger">*</span>
+              </label>
               <select id="availabilitySlot" class="form-control" t-on-change="availabilitySlotChanged">
-                <option value="" selected="1" disabled="1">Choose Time Slot</option>
+                <option t-if="!state.availabilitySlot" value="" selected="1" disabled="1">Choose Time Slot</option>
                 <t t-foreach="props.availabilities" t-as="availability">
-                  <t t-if="availability.id === state.availabilitySlot">
+                  <t t-if="availability.id == state.availabilitySlot">
                     <option t-att-value="availability.id" selected="1">
                       <t t-esc="availability.name" />
                     </option>

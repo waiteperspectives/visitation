@@ -12,11 +12,14 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
           <form t-on-submit.prevent="nextStep" class="col-md-6">
             <h3><t t-esc="props.heading" /></h3>
             <div class="form-group">
-              <label for="residentUnit">Unit</label>
+              <label for="residentUnit">
+                Unit
+                <span class="text-danger">*</span>
+              </label>
               <select id="residentUnit" class="form-control" t-on-change="residentUnitChanged">
                 <t t-foreach="filters.units" t-as="unit" t-key="unit.id">
                   <option value="" selected="1" disabled="1" hidden="1">Choose Unit</option>
-                  <t t-if="unit.id === state.residentUnit">
+                  <t t-if="unit.id == state.residentUnit">
                     <option t-att-value="unit.id" selected="1"><t t-esc="unit.name" /></option>
                   </t>
                   <t t-else="">
@@ -26,11 +29,14 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
               </select>
             </div>
             <div class="form-group">
-              <label for="residentRoom">Room</label>
+              <label for="residentRoom">
+                Room
+                <span class="text-danger">*</span>
+              </label>
               <select id="residentRoom" class="form-control" t-on-change="residentRoomChanged">
                 <t t-foreach="filters.rooms" t-as="room" t-key="room.id">
                   <option value="" selected="1" disabled="1" hidden="1">Choose Room</option>
-                  <t t-if="room.id === state.residentRoom">
+                  <t t-if="room.id == state.residentRoom">
                     <option t-att-value="room.id" selected="1"><t t-esc="room.name" /></option>
                   </t>
                   <t t-else="">
@@ -40,11 +46,14 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
               </select>
             </div>
             <div class="form-group">
-              <label for="residentBed">Bed</label>
+              <label for="residentBed">
+                Bed
+                <span class="text-danger">*</span>
+              </label>
               <select id="residentBed" class="form-control" t-on-change="residentBedChanged">
                 <t t-foreach="filters.beds" t-as="bed" t-key="bed.id">
-                  <option value="" selected="1" disabled="1" hidden="1">Choose Bed</option>
-                  <t t-if="bed.id === state.residentBed">
+                  <option t-if="!state.residentBed" value="" selected="1" disabled="1" hidden="1">Choose Bed</option>
+                  <t t-if="bed.id == state.residentBed">
                     <option t-att-value="bed.id" selected="1"><t t-esc="bed.name" /></option>
                   </t>
                   <t t-else="">
@@ -121,6 +130,7 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
     }
 
     residentUnitChanged = (e) => {
+      console.log(this.state);
       this.state.residentUnit = parseInt(e.target.value);
       this.filters.rooms = this.getRooms(parseInt(e.target.value));
     }

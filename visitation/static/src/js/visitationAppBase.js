@@ -26,6 +26,7 @@ odoo.define('visitation.visitationAppBase', function () {
       if ( !this.stateId ) { return false; }
       if ( !this.zip ) { return false; }
       if ( !this.testDate instanceof Date || isNaN(this.testDate) ) { return false; }
+      if ( !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email) ) { return false; }
       return true
     }
 

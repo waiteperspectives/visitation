@@ -10,48 +10,89 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       <div class="VisitorCard card mb-3">
         <div class="card-body">
           <div class="form-group">
-            <label for="visitorName">Name</label>
+            <label for="visitorName">
+              Name
+              <span class="text-danger">*</span>
+            </label>
             <input class="form-control" name="visitorName" t-model="state.visitorName" t-on-change="update" />
           </div>
           <div class="form-group">
-            <label for="visitorEmail">Email</label>
-            <input class="form-control" name="visitorEmail" t-model="state.visitorEmail" t-on-change="update" />
+            <label for="visitorEmail">
+              Email
+              <span class="text-danger">*</span>
+            </label>
+            <input class="form-control" t-att-class="isValidEmail(state.visitorEmail)" name="visitorEmail" t-model="state.visitorEmail" t-on-change="update" t-on-blur="firstPassComplete" />
           </div>
           <div class="form-group">
-            <label for="visitorTestDate">Test Date</label>
+            <label for="visitorTestDate">
+              Test Date
+              <span class="text-danger">*</span>
+            </label>
             <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" />
           </div>
           <div class="form-group">
-            <label for="visitorStreet">Street</label>
+            <label for="visitorStreet">
+              Street
+              <span class="text-danger">*</span>
+            </label>
             <input class="form-control" name="visitorStreet" t-model="state.visitorStreet" t-on-change="update" />
           </div>
           <div class="form-group">
-            <label for="visitorCity">City</label>
+            <label for="visitorCity">
+              City
+              <span class="text-danger">*</span>
+            </label>
             <input class="form-control" name="visitorCity" t-model="state.visitorCity" t-on-change="update" />
           </div>
           <div class="form-group">
-            <label for="visitorState">State</label>
+            <label for="visitorState">
+              State
+              <span class="text-danger">*</span>
+            </label>
             <select name="visitorState" class="form-control" t-on-change="onVisitorStateChanged">
-              <option value="" selected="1" disabled="1" hidden="1">Choose State</option>
-              <t t-foreach="props.states" t-as="state" t-key="state.id">
-                <option t-att-value="state.id"><t t-esc="state.name" /></option>
+              <t t-foreach="props.states" t-as="stateRecord" t-key="stateRecord.id">
+                <t t-if="!state.visitorState">
+                  <option t-att-selected="stateRecord.name == 'New York'" t-att-value="stateRecord.id"><t t-esc="stateRecord.name" /></option>
+                </t>
+                <t t-else="">
+                  <option t-att-selected="stateRecord.id == state.visitorState" t-att-value="stateRecord.id"><t t-esc="stateRecord.name" /></option>
+                </t>
               </t>
             </select>
           </div>
           <div class="form-group">
-            <label for="visitorZip">Zip</label>
+            <label for="visitorZip">
+              Zip
+              <span class="text-danger">*</span>
+            </label>
             <input class="form-control" name="visitorZip" t-model="state.visitorZip" t-on-change="update" />
           </div>
         </div>
       </div>
     `;
 
+    isValidEmail = (email) => {
+      if ( this.visitorEmailFirstPass.flag ) {
+        return true;
+      }
+      if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) {
+         return '';
+      } else {
+       return 'is-invalid';
+      }
+    }
+
+    visitorEmailFirstPass = useState({flag: true});
+    firstPassComplete = () => {
+      this.visitorEmailFirstPass.flag = false;
+    }
+
     state = useState({
       visitorName: this.props.visitor.name,
       visitorEmail: this.props.visitor.email,
       visitorStreet: this.props.visitor.street,
       visitorCity: this.props.visitor.city,
-      visitorState: this.props.visitor.state,
+      visitorState: this.props.visitor.stateId,
       visitorZip: this.props.visitor.zip,
       visitorTestDate: this.props.visitor.testDate,
       visitorPrimary: this.props.visitor.primary,

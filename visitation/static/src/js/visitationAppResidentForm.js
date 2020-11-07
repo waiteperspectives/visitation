@@ -130,7 +130,6 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
     }
 
     residentUnitChanged = (e) => {
-      console.log(this.state);
       this.state.residentUnit = parseInt(e.target.value);
       this.filters.rooms = this.getRooms(parseInt(e.target.value));
     }

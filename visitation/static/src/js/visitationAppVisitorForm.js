@@ -92,7 +92,7 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       visitorEmail: this.props.visitor.email,
       visitorStreet: this.props.visitor.street,
       visitorCity: this.props.visitor.city,
-      visitorState: this.props.visitor.stateId,
+      visitorState: this.props.visitor.stateId || this.props.states.find(x => x.name == 'New York').id,
       visitorZip: this.props.visitor.zip,
       visitorTestDate: this.props.visitor.testDate,
       visitorPrimary: this.props.visitor.primary,

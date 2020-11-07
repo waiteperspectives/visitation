@@ -52,5 +52,36 @@
       <field name="capacity">5</field>
     </record>
 
+    <record id="heading1" model="visitation.content">
+      <field name="key">heading1</field>
+      <field name="value">Where does your loved one reside?</field>
+    </record>
+
+    <record id="heading2" model="visitation.content">
+      <field name="key">heading2</field>
+      <field name="value">Who will be visiting?</field>
+    </record>
+
+    <record id="heading3" model="visitation.content">
+      <field name="key">heading3</field>
+      <field name="value">When would you like to visit?</field>
+    </record>
+
+    <record id="noAvailability" model="visitation.content">
+      <field name="key">noAvailability</field>
+      <field name="value">We're sorry, based on your request, we don't have any time slots that can accomodate you.</field>
+    </record>
+
+    <record id="visitationNotOpen" model="visitation.content">
+      <field name="key">visitationNotOpen</field>
+      <field name="value">We're sorry, visitation is not currently open.</field>
+    </record>
+
+    <record id="visitConfirmationMessage" model="visitation.content">
+      <field name="key">visitConfirmationMessage</field>
+      <field name="value">A confirmation email has been sent to your email. Pleas call us if you are unable to make your visit.</field>
+    </record>
+
+
   </data>
 </odoo>

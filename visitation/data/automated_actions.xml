@@ -11,12 +11,43 @@
 for rec in records.sudo():
   if rec.requested_availability_id:
     env['scheduled.visit'].search([('visit_request_id', '=', rec.id)]).unlink()
-    scheduled = env['scheduled.visit'].create({'visit_request_id': rec.id, 'visit_availability_slot_id': rec.requested_availability_id.id, 'visitor_screening_ids': rec.screening_ids.ids})
+    scheduled = env['scheduled.visit'].create({'visit_request_id': rec.id, 'visit_availability_slot_id': rec.requested_availability_id.id, 'visitor_screening_ids': rec.screening_ids.ids, 'resident_bed_id': rec.resident_bed_id.id})
     rec['scheduled_visit_id'] = scheduled.id
         </field>
         <field name="trigger">on_write</field>
         <field name="filter_domain"></field>
     </record>
     
+    <record id="action_auto_mail_confirmation_message" model="base.automation">
+        <field name="name">Visitation: Email visitors when visit scheduled</field>
+        <field name="active" eval="True"/>
+        <field name="model_id" ref="visitation.model_scheduled_visit"/>
+        <field name="state">code</field>
+        <field name="code">
+for rec in records.sudo():
+  partner_vals = []
+  for visitor in rec.visitor_screening_ids:
+    partner_vals.append({
+      'name': visitor.name,
+      'email': visitor.email,
+      'phone': visitor.phone,
+      'street': visitor.street,
+      'street2': visitor.street2,
+      'city': visitor.city,
+      'zip': visitor.zip,
+      'state_id': visitor.state_id.id,
+      'country_id': visitor.country_id.id,
+    })
+  partners = env['res.partner'].sudo().create(partner_vals)
+  rec['partner_ids'] = partners.ids
+  rec.message_unsubscribe(env.ref('visitation.public_rpc_user').ids)
+  rec.message_subscribe(partners.ids)
+  tmpl = env.ref('visitation.mail_template_confirm_visit')
+  if tmpl:
+      rec.with_context(force_send=True).message_post_with_template(tmpl.id)
+        </field>
+        <field name="trigger">on_create</field>
+    </record>
+
   </data>
 </odoo>

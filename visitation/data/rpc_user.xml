@@ -4,6 +4,7 @@
 
     <record id="public_rpc_partner" model="res.partner">
         <field name="name">Public rpc user</field>
+        <field name="email">public@example.com</field>
         <field name="active" eval="1"/>
     </record>
 

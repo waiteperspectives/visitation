@@ -116,10 +116,18 @@ class VisitorScreening(models.Model):
     phone = fields.Char()
     test_date = fields.Date(required=True)
 
+    visit_request_ids = fields.Many2many(
+        comodel_name="visit.request",
+        relation="visit_screening_request_rel",
+        column1="visitor_screening_id",
+        column2="visit_request_id",
+    )
+
 
 class ScheduledVisit(models.Model):
     _name = "scheduled.visit"
     _description = "Scheduled visit"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
     name = fields.Char(compute="_compute_name")
     visit_availability_slot_id = fields.Many2one(
@@ -128,7 +136,9 @@ class ScheduledVisit(models.Model):
     visitor_screening_ids = fields.Many2many(
         comodel_name="visitor.screening", required=True, string="Visitors"
     )
+    resident_bed_id = fields.Many2one(comodel_name="resident.bed")
     visit_request_id = fields.Many2one(comodel_name="visit.request")
+    partner_ids = fields.Many2many(comodel_name="res.partner")
 
     def _compute_name(self):
         for record in self:
@@ -153,7 +163,11 @@ class VisitRequest(models.Model):
 
     # front end writes screenings, auto-action builds visitors
     screening_ids = fields.Many2many(
-        comodel_name="visitor.screening", string="Visitors"
+        comodel_name="visitor.screening",
+        string="Visitors",
+        relation="visit_screening_request_rel",
+        column1="visit_request_id",
+        column2="visitor_screening_id",
     )
 
     # derived on bed and screenings submitted
@@ -164,7 +178,10 @@ class VisitRequest(models.Model):
     requested_availability_id = fields.Many2one(
         comodel_name="availability.slot", string="Requested Slot"
     )
-    scheduled_visit_id = fields.Many2one(comodel_name="scheduled.visit")
+    scheduled_visit_id = fields.Many2one(comodel_name="scheduled.visit", readonly="1")
+
+    # for email
+    assigned_to_user_id = fields.Many2one(comodel_name="res.users")
 
     def _compute_name(self):
         for record in self:

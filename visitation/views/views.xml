@@ -60,15 +60,37 @@
       <field name="arch" type="xml">
         <tree editable="bottom">
           <field name="name" />
+          <field name="email" />
           <field name="street" />
           <field name="street2" />
           <field name="zip" />
           <field name="city" />
           <field name="state_id" />
-          <field name="country_id" />
+          <field name="country_id" groups="base.group_no_one" />
           <field name="phone" />
           <field name="test_date" />
         </tree>
+      </field>
+    </record>
+
+    <record id="view_visitor_screening_form" model="ir.ui.view">
+      <field name="name">view_visitor_screening_form</field>
+      <field name="model">visitor.screening</field>
+      <field name="arch" type="xml">
+        <form string="view_visitor_screening_form">
+          <group>
+            <field name="name" />
+            <field name="email" />
+            <field name="street" />
+            <field name="street2" />
+            <field name="zip" />
+            <field name="city" />
+            <field name="state_id" />
+            <field name="country_id" groups="base.group_no_one" />
+            <field name="phone" />
+            <field name="test_date" />
+          </group>
+        </form>
       </field>
     </record>
 
@@ -76,11 +98,47 @@
       <field name="name">view_scheduled_visit_tree</field>
       <field name="model">scheduled.visit</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree create="false">
           <field name="visit_availability_slot_id" />
+          <field name="resident_bed_id" />
           <field name="visitor_screening_ids" widget="many2many_tags" />
-          <field name="visit_request_id" />
+          <field name="visit_request_id" groups="base.group_no_one" />
         </tree>
+      </field>
+    </record>
+
+    <record id="view_scheduled_visit_form" model="ir.ui.view">
+      <field name="name">view_scheduled_visit_form</field>
+      <field name="model">scheduled.visit</field>
+      <field name="arch" type="xml">
+        <form string="view_scheduled_visit_form">
+            <sheet>
+              <div class="oe_title">
+                <h1 class="o_row">
+                    <field name="name" />
+                  </h1>
+              </div>
+              <group>
+                <group>
+                  <field name="visit_availability_slot_id" />
+                </group>
+                <group>
+                  <field name="resident_bed_id" />
+                  <field name="visit_request_id" groups="base.group_no_one" />
+                </group>
+              </group>
+              <notebook>
+                <page string="Visitors">
+                  <field name="visitor_screening_ids" />
+                </page>
+              </notebook>
+              <div class="oe_chatter">
+                <field name="message_follower_ids" options="{'post_refresh':True}" groups="base.group_user"/>
+                <field name="activity_ids"/>
+                <field name="message_ids"/>
+              </div>
+            </sheet>
+        </form>
       </field>
     </record>
 
@@ -88,7 +146,7 @@
       <field name="name">view_visit_request_tree</field>
       <field name="model">visit.request</field>
       <field name="arch" type="xml">
-        <tree editable="bottom"
+        <tree
           decoration-success="scheduled_visit_id != False"
           >
           <field name="id" groups="base.group_no_one" />
@@ -98,8 +156,49 @@
           <field name="screening_ids" widget="many2many_tags" />
           <field name="requested_availability_id" />
           <field name="scheduled_visit_id" string="Result" />
+          <field name="assigned_to_user_id" groups="base.group_no_one" />
           <field name="availability_ids" widget="many2many_tags" groups="base.group_no_one" />
         </tree>
+      </field>
+    </record>
+
+    <record id="view_visit_request_form" model="ir.ui.view">
+      <field name="name">view_visit_request_form</field>
+      <field name="model">visit.request</field>
+      <field name="arch" type="xml">
+        <form string="view_visit_request_form">
+            <sheet>
+              <div class="oe_title">
+                <h1 class="o_row">
+                    <field name="name" />
+                  </h1>
+              </div>
+              <group>
+                <group>
+                  <field name="resident_bed_id" />
+                  <field name="requested_availability_id"
+                    domain="[('id', 'in', availability_ids)]"
+                    />
+                </group>
+                <group>
+                  <field name="assigned_to_user_id" />
+                  <field name="scheduled_visit_id"
+                    attrs="{'invisible': [('scheduled_visit_id', '=', False)]}"
+                    />
+                </group>
+              </group>
+              <notebook>
+                <page string="Visitors">
+                  <field name="screening_ids"
+                    domain="[('visit_request_ids', '=', False)]"
+                    />
+                </page>
+                <page string="Available Times" groups="base.group_no_one">
+                  <field name="availability_ids" />
+                </page>
+              </notebook>
+            </sheet>
+        </form>
       </field>
     </record>
 

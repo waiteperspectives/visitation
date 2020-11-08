@@ -11,8 +11,10 @@
     "data": [
         "security/groups.xml",
         "security/ir.model.access.csv",
+        "data/defaults.xml",
         "data/rpc_user.xml",
         "data/automated_actions.xml",
+        "data/mail_templates.xml",
         "security/rules.xml",
         "views/assets.xml",
         "views/views.xml",

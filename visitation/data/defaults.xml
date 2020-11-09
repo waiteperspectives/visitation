@@ -2,11 +2,6 @@
 <odoo>
   <data>
 
-    <record id="default_assigned_to" model="ir.default">
-      <field name="field_id" ref="field_visit_request__assigned_to_user_id" />
-      <field name="json_value">2</field>
-    </record>
-
     <record id="default_state_id" model="ir.default">
       <field name="field_id" ref="field_visitor_screening__state_id" />
       <field name="json_value" ref="base.state_us_27" />

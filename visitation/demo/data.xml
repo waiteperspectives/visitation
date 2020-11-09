@@ -79,7 +79,7 @@
 
     <record id="visitConfirmationMessage" model="visitation.content">
       <field name="key">visitConfirmationMessage</field>
-      <field name="value">A confirmation email has been sent to your email. Pleas call us if you are unable to make your visit.</field>
+      <field name="value">A confirmation email has been sent to your email. Please call us if you are unable to make your visit.</field>
     </record>
 
 

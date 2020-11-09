@@ -119,6 +119,14 @@ odoo.define('visitation.visitationAppMain', function(require) {
       }, 2000);
     }
 
+    notifyOnError = (rs, callback) => {
+      if ( rs.data.error ) {
+        this.notify(rs.data.error.message);
+      } else {
+        callback();
+      }
+    }
+
     addVisitor = (visitor) => {
       this.state.visitRequest.visitors.push(visitor);
     }
@@ -168,13 +176,16 @@ odoo.define('visitation.visitationAppMain', function(require) {
     }
 
     residentFormSubmit = (vals) => {
+      const self = this;
       Object.assign(this.state.visitRequest, vals);
       IO.updateVisitRequest(
         this.session, 
         this.state.visitRequest.visitRequestId,
         {'resident_bed_id': this.state.visitRequest.residentBed}
-      ).then(() => {
-        this.stepForward();
+      ).then(rs => {
+        self.notifyOnError(rs, () => {
+          this.stepForward()
+        });
       }).catch(err => {
         this.notify(err);
       });
@@ -198,15 +209,19 @@ odoo.define('visitation.visitationAppMain', function(require) {
         this.session, 
         this.state.visitRequest.visitRequestId,
         {'screening_ids': newScreenings}
-      ).then(() => {
-        IO.fetchAvailabilities(
-          this.session,
-          this.state.visitRequest.visitRequestId
-        ).then(rs => {
-          self.state.dataValues.availabilities = rs.data.result;
-          this.stepForward();
-        }).catch(err => {
-          this.notify(err);
+      ).then(rs => {
+        self.notifyOnError(rs, () => {
+          IO.fetchAvailabilities(
+            this.session,
+            this.state.visitRequest.visitRequestId
+          ).then(rs => {
+            self.notifyOnError(rs, () => {
+              self.state.dataValues.availabilities = rs.data.result;
+              this.stepForward();
+            });
+          }).catch(err => {
+            this.notify(err);
+          });
         });
       }).catch(err => {
         this.notify(err);
@@ -214,13 +229,16 @@ odoo.define('visitation.visitationAppMain', function(require) {
     }
 
     schedulingFormSubmit = (vals) => {
+      const self = this;
       Object.assign(this.state.visitRequest, vals);
       IO.updateVisitRequest(
         this.session, 
         this.state.visitRequest.visitRequestId,
         {'requested_availability_id': this.state.visitRequest.availabilitySlot}
-      ).then(() => {
-        this.stepForward();
+      ).then(rs => {
+        self.notifyOnError(rs, () => {
+          this.stepForward()
+        });
       }).catch(err => {
         this.notify(err);
       });

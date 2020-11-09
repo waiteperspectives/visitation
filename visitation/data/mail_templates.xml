@@ -9,9 +9,43 @@
             <field name="email_from">${user.company_id.email_formatted | safe}</field>
             <field name="body_html" type="html">
 <div style="margin: 0px; padding: 0px;">
+  <table style="width: 800px;border-collapse: collapse;">
+    <tr style="background-color: blue; text-align:center;">
+      <td/>
+      <td>
+        <h1 style="color: white;">Confirmation</h1>
+      </td>
+      <td/>
+    </tr>
+  </table>
+  <table style="width: 800px;border-collapse: collapse;">
+    <tr>
+      <td>
   <p style="margin: 0px; padding: 0px; font-size: 12px;">
-    Hello World
+    Hello ${' and '.join(object.visitor_screening_ids.mapped('name'))},
+    <br/><br/>
+      You have scheduled a visit to ${user.company_id.name | safe}, taking place
+      <strong>${object.visit_availability_slot_id.name | safe}</strong>.
+      If you are unable to make your visit for any reason, please contact us.
   </p>
+      </td>
+      <td/>
+      <td/>
+    </tr>
+  </table>
+  <table style="width: 800px;border-collapse: collapse;">
+    <tr style="background-color: blue; text-align:center;color: white;">
+      <td >
+        <p>${user.company_id.name | safe}</p>
+      </td>
+      <td >
+        <p>${user.company_id.name | safe}</p>
+      </td>
+      <td >
+        <p>${user.company_id.name | safe}</p>
+      </td>
+    </tr>
+  </table>
 </div>
             </field>
             <field name="auto_delete" eval="False"/>

@@ -124,6 +124,15 @@ class VisitorScreening(models.Model):
     )
 
 
+class ResPartner(models.Model):
+    _inherit = "res.partner"
+
+    scheduled_visit_id = fields.Many2one(
+        comodel_name="scheduled.visit",
+        ondelete="cascade",
+    )
+
+
 class ScheduledVisit(models.Model):
     _name = "scheduled.visit"
     _description = "Scheduled visit"
@@ -138,7 +147,10 @@ class ScheduledVisit(models.Model):
     )
     resident_bed_id = fields.Many2one(comodel_name="resident.bed")
     visit_request_id = fields.Many2one(comodel_name="visit.request")
-    partner_ids = fields.Many2many(comodel_name="res.partner")
+    partner_ids = fields.One2many(
+        comodel_name="res.partner",
+        inverse_name="scheduled_visit_id",
+    )
 
     def _compute_name(self):
         for record in self:
@@ -179,9 +191,6 @@ class VisitRequest(models.Model):
         comodel_name="availability.slot", string="Requested Slot"
     )
     scheduled_visit_id = fields.Many2one(comodel_name="scheduled.visit", readonly="1")
-
-    # for email
-    assigned_to_user_id = fields.Many2one(comodel_name="res.users")
 
     def _compute_name(self):
         for record in self:

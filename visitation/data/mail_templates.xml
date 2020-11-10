@@ -10,39 +10,45 @@
             <field name="body_html" type="html">
 <div style="margin: 0px; padding: 0px;">
   <table style="width: 800px;border-collapse: collapse;">
-    <tr style="background-color: blue; text-align:center;">
-      <td/>
-      <td>
-        <h1 style="color: white;">Confirmation</h1>
+    <tr style="background-color: #f7f2f2; text-align:center;">
+      <td valign="middle" align="left" style="width: 266px;">
+        <img src="/logo.png?company=${user.company_id.id}" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${user.company_id.name}"/>
       </td>
-      <td/>
+      <td valign="middle" align="center">
+        <h1 style="color: #4276a9;">Visit Scheduled</h1>
+      </td>
+      <td style="width: 266px;" />
     </tr>
   </table>
   <table style="width: 800px;border-collapse: collapse;">
     <tr>
       <td>
-  <p style="margin: 0px; padding: 0px; font-size: 12px;">
-    Hello ${' and '.join(object.visitor_screening_ids.mapped('name'))},
-    <br/><br/>
-      You have scheduled a visit to ${user.company_id.name | safe}, taking place
-      <strong>${object.visit_availability_slot_id.name | safe}</strong>.
-      If you are unable to make your visit for any reason, please contact us.
-  </p>
+        <br/>
+        <p style="margin: 0px; padding: 0px; font-size: 12px;">
+          Hello ${' and '.join(object.visitor_screening_ids.mapped('name'))},
+          <br/><br/>
+            You have scheduled a visit to ${user.company_id.name | safe}, taking place
+            <strong>${object.visit_availability_slot_id.name | safe}</strong>.
+            If you are unable to make your visit for any reason, please contact us.
+          <br/><br/>
+            See you soon!
+        </p>
+        <br/><br/>
       </td>
       <td/>
       <td/>
     </tr>
   </table>
   <table style="width: 800px;border-collapse: collapse;">
-    <tr style="background-color: blue; text-align:center;color: white;">
-      <td >
+    <tr style="background-color: #f7f2f2; text-align:center;color: #4276a9;">
+      <td style="width: 266px;">
         <p>${user.company_id.name | safe}</p>
       </td>
       <td >
-        <p>${user.company_id.name | safe}</p>
+        <p>${user.company_id.phone | safe}</p>
       </td>
-      <td >
-        <p>${user.company_id.name | safe}</p>
+      <td style="width: 266px;">
+        <p>${user.company_id.email | safe}</p>
       </td>
     </tr>
   </table>

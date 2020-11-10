@@ -24,6 +24,13 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
             <input class="form-control" t-att-class="isValidEmail(state.visitorEmail)" name="visitorEmail" t-model="state.visitorEmail" t-on-change="update" t-on-blur="firstPassComplete" />
           </div>
           <div class="form-group">
+            <label for="visitorPhone">
+              Phone
+              <span class="text-danger">*</span>
+            </label>
+            <input type="tel" class="form-control" t-att-class="isValidPhone(state.visitorPhone)" name="visitorPhone" t-on-change="update" t-on-blur="firstPassComplete" t-on-input="phoneMask" />
+          </div>
+          <div class="form-group">
             <label for="visitorTestDate">
               Test Date
               <span class="text-danger">*</span>
@@ -81,8 +88,19 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
        return 'is-invalid';
       }
     }
+    isValidPhone = (phone) => {
+      if ( this.visitorPhoneFirstPass.flag ) {
+        return true;
+      }
+      if (/^.*/.test(phone)) {
+         return '';
+      } else {
+       return 'is-invalid';
+      }
+    }
 
     visitorEmailFirstPass = useState({flag: true});
+    visitorPhoneFirstPass = useState({flag: true});
     firstPassComplete = () => {
       this.visitorEmailFirstPass.flag = false;
     }
@@ -90,6 +108,7 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
     state = useState({
       visitorName: this.props.visitor.name,
       visitorEmail: this.props.visitor.email,
+      visitorPhone: this.props.visitor.phone,
       visitorStreet: this.props.visitor.street,
       visitorCity: this.props.visitor.city,
       visitorState: this.props.visitor.stateId || this.props.states.find(x => x.name == 'New York').id,
@@ -98,12 +117,19 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       visitorPrimary: this.props.visitor.primary,
     });
 
+    phoneMask = (e) => {
+      const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+      e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+      this.state.visitorPhone = e.target.value;
+    }
+
     update = () => {
       const state = this.props.states.find(s => s.id === parseInt(this.state.visitorState));
       const stateName = state ? state.name : "";
       const visitor = new Visitor({
         name: this.state.visitorName,
         email: this.state.visitorEmail,
+        phone: this.state.visitorPhone,
         street: this.state.visitorStreet,
         city: this.state.visitorCity,
         stateId: this.state.visitorState,

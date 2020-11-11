@@ -4,37 +4,37 @@
 
     <record id="action_visitation_content" model="ir.actions.act_window">
       <field name="name">Content</field>
-      <field name="res_model">visitation.content</field>
+      <field name="res_model">x_visitation_content</field>
       <field name="view_mode">tree,form</field>
     </record>
 
     <record id="action_resident_bed" model="ir.actions.act_window">
       <field name="name">Beds</field>
-      <field name="res_model">resident.bed</field>
+      <field name="res_model">x_resident_bed</field>
       <field name="view_mode">tree,form</field>
     </record>
 
     <record id="action_availability_slot" model="ir.actions.act_window">
       <field name="name">Availability Slots</field>
-      <field name="res_model">availability.slot</field>
+      <field name="res_model">x_availability_slot</field>
       <field name="view_mode">tree,form</field>
     </record>
 
     <record id="action_visitor_screening" model="ir.actions.act_window">
       <field name="name">Visitors</field>
-      <field name="res_model">visitor.screening</field>
+      <field name="res_model">x_visitor_screening</field>
       <field name="view_mode">tree,form</field>
     </record>
 
     <record id="action_scheduled_visit" model="ir.actions.act_window">
       <field name="name">Scheduled Visits</field>
-      <field name="res_model">scheduled.visit</field>
+      <field name="res_model">x_scheduled_visit</field>
       <field name="view_mode">tree,form</field>
     </record>
 
     <record id="action_visit_request" model="ir.actions.act_window">
       <field name="name">Visit Requests</field>
-      <field name="res_model">visit.request</field>
+      <field name="res_model">x_visit_request</field>
       <field name="view_mode">tree,form</field>
     </record>
     

@@ -4,7 +4,7 @@
 
         <record id="mail_template_confirm_visit" model="mail.template">
             <field name="name">Visitation: Confirmation Email</field>
-            <field name="model_id" ref="visitation.model_scheduled_visit"/>
+            <field name="model_id" ref="visitation.model_x_scheduled_visit"/>
             <field name="subject">Your Scheduled Visit</field>
             <field name="email_from">${user.company_id.email_formatted | safe}</field>
             <field name="body_html" type="html">
@@ -25,10 +25,10 @@
       <td>
         <br/>
         <p style="margin: 0px; padding: 0px; font-size: 12px;">
-          Hello ${' and '.join(object.visitor_screening_ids.mapped('name'))},
+          Hello ${' and '.join(object.x_visitor_screening_ids.mapped('x_name'))},
           <br/><br/>
             You have scheduled a visit to ${user.company_id.name | safe}, taking place
-            <strong>${object.visit_availability_slot_id.name | safe}</strong>.
+            <strong>${object.x_visit_availability_slot_id.x_name | safe}</strong>.
             If you are unable to make your visit for any reason, please contact us.
           <br/><br/>
             See you soon!

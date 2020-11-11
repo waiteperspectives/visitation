@@ -5,29 +5,29 @@
     <record id="action_auto_set_scheduled_visit" model="base.automation">
         <field name="name">Visitation: Create a scheduled visit based on requested visit slot</field>
         <field name="active" eval="True"/>
-        <field name="model_id" ref="visitation.model_visit_request"/>
+        <field name="model_id" ref="visitation.model_x_visit_request"/>
         <field name="state">code</field>
         <field name="code">
 def prepare_new_scheduled_visit(visitors):
   partner_vals = [(6, 0, [])]
   for visitor in visitors:
     partner_vals.append((0, 0, {
-      'name': visitor.name,
-      'email': visitor.email,
-      'phone': visitor.phone,
-      'street': visitor.street,
-      'street2': visitor.street2,
-      'city': visitor.city,
-      'zip': visitor.zip,
-      'state_id': visitor.state_id.id,
-      'country_id': visitor.country_id.id,
+      'name': visitor.x_name,
+      'email': visitor.x_email,
+      'phone': visitor.x_phone,
+      'street': visitor.x_street,
+      'street2': visitor.x_street2,
+      'city': visitor.x_city,
+      'zip': visitor.x_zip,
+      'state_id': visitor.x_state_id.id,
+      'country_id': visitor.x_country_id.id,
     }))
-  scheduled = env['scheduled.visit'].sudo().create({
-    'visit_request_id': rec.id,
-    'visit_availability_slot_id': rec.requested_availability_id.id,
-    'visitor_screening_ids': rec.screening_ids.ids,
-    'resident_bed_id': rec.resident_bed_id.id,
-    'partner_ids': partner_vals,
+  scheduled = env['x_scheduled_visit'].sudo().create({
+    'x_visit_request_id': rec.id,
+    'x_visit_availability_slot_id': rec.x_requested_availability_id.id,
+    'x_visitor_screening_ids': rec.x_screening_ids.ids,
+    'x_resident_bed_id': rec.x_resident_bed_id.id,
+    'x_partner_ids': partner_vals,
   })
   return scheduled
 
@@ -38,12 +38,12 @@ def send_confirmation_email(scheduled_visit):
   env.ref('mail.ir_cron_mail_scheduler_action').sudo().method_direct_trigger()
 
 for rec in records.sudo():
-  if rec.requested_availability_id:
-    env['scheduled.visit'].search([('visit_request_id', '=', rec.id)]).unlink()
-    scheduled = prepare_new_scheduled_visit(rec.screening_ids)
-    rec['scheduled_visit_id'] = scheduled.id
+  if rec.x_requested_availability_id:
+    env['x_scheduled_visit'].search([('x_visit_request_id', '=', rec.id)]).unlink()
+    scheduled = prepare_new_scheduled_visit(rec.x_screening_ids)
+    rec['x_scheduled_visit_id'] = scheduled.id
     scheduled.message_unsubscribe(env.ref('visitation.public_rpc_user').ids)
-    scheduled.message_subscribe(scheduled.partner_ids.ids)
+    scheduled.message_subscribe(scheduled.x_partner_ids.ids)
     send_confirmation_email(scheduled)
         </field>
         <field name="trigger">on_write</field>

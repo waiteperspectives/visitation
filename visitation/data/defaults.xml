@@ -3,13 +3,13 @@
   <data>
 
     <record id="default_state_id" model="ir.default">
-      <field name="field_id" ref="field_visitor_screening__state_id" />
+      <field name="field_id" ref="field_x_visitor_screening__x_state_id" />
       <field name="json_value" ref="base.state_us_27" />
     </record>
 
     <!-- default visitor country united states -->
     <record id="default_state_id" model="ir.default">
-      <field name="field_id" ref="field_visitor_screening__country_id" />
+      <field name="field_id" ref="field_x_visitor_screening__x_country_id" />
       <field name="json_value" ref="base.us" />
     </record>
 

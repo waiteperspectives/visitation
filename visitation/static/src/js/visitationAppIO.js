@@ -1,5 +1,5 @@
-odoo.define('visitation.visitationAppIO', function(require) {
-  'use strict';
+odoo.define("visitation.visitationAppIO", function(require) {
+  "use strict";
 
   class OdooSession {
     constructor(host, port, db, username, password) {
@@ -8,7 +8,7 @@ odoo.define('visitation.visitationAppIO', function(require) {
       this.db = db;
       this.username = username;
       this.password = password;
-      this.url = '/jsonrpc';
+      this.url = "/jsonrpc";
       this.uid = false;
     }
 
@@ -65,7 +65,7 @@ odoo.define('visitation.visitationAppIO', function(require) {
       args.push(_domain);
       const _fields = fields || [];
       const kwargs = {};
-      kwargs['fields'] = _fields;
+      kwargs["fields"] = _fields;
       const params = {
         "service": "object",
         "method": "execute_kw",
@@ -126,64 +126,76 @@ odoo.define('visitation.visitationAppIO', function(require) {
 
   class IO {
     static fetchStates = async (session) => {
-      return session.searchRead('res.country.state', [['country_id', '=', 233]], ["id", "name"]);
+      return session.searchRead("res.country.state", [["country_id", "=", 233]], ["id", "name"]);
     }
 
     static fetchBeds = async (session) => {
-      const bedResult = await session.searchRead('resident.bed', [], ["id", "unit_id", "room_id", "bed_position"])
+      const bedResult = await session.searchRead("x_resident_bed", [], ["id", "x_unit_id", "x_room_id", "x_bed_position"])
       bedResult.data.result.forEach(bed => {
-        bed.bed_id = [bed.id, bed.bed_position];
+        bed.unit_id = bed.x_unit_id;
+        bed.room_id = bed.x_room_id;
+        bed.bed_position = bed.x_bed_position;
+        bed.bed_id = [bed.id, bed.x_bed_position];
       });
       return new Promise(resolve => resolve(bedResult));
     }
 
     static fetchContent = async (session) => {
-      return session.searchRead('visitation.content', [], ["key", "value"]);
+      const contentResult = await session.searchRead("x_visitation_content", [], ["x_key", "x_value"]);
+      contentResult.data.result.forEach(content => {
+        content.key = content.x_key;
+        content.value = content.x_value;
+      });
+      return new Promise(resolve => resolve(contentResult));
     }
 
     static fetchAvailabilities = async (session, id) => {
-      const visitRequestRaw = await session.searchRead('visit.request', [['id', '=', id]], ['availability_ids']);
-      const visitRequestAvailabilityIds = visitRequestRaw.data.result[0].availability_ids;
-      return session.searchRead('availability.slot', [['id', 'in', visitRequestAvailabilityIds]], ['id', 'name']);
+      const visitRequestRaw = await session.searchRead("x_visit_request", [["id", "=", id]], ["x_availability_ids"]);
+      const visitRequestAvailabilityIds = visitRequestRaw.data.result[0].x_availability_ids;
+      const availabilityResult = await session.searchRead("x_availability_slot", [["id", "in", visitRequestAvailabilityIds]], ["id", "x_name"]);
+      availabilityResult.data.result.forEach(availability => {
+        availability.name = availability.x_name;
+      });
+      return new Promise(resolve => resolve(availabilityResult));
     }
 
     static createVisitRequest = async (session) => {
-      return session.create('visit.request', {});
+      return session.create("x_visit_request", {});
     }
 
     static updateVisitRequest = async (session, id, vals) => {
-      return session.write('visit.request', id, vals);
+      return session.write("x_visit_request", id, vals);
     };
 
     static updateRequestedAvailabilityId = async (session, id, availabilitySlotId) => {
-      return this.updateVisitRequest(session, id, {'requested_availability_id': availabilitySlotId});
+      return this.updateVisitRequest(session, id, {"x_requested_availability_id": availabilitySlotId});
     }
 
     static updateVisitorScreenings = async (session, id, visitors) => {
       const newScreenings = visitors.map(visitor => {
             return [0, 0, {
-              name: visitor.name,
-              email: visitor.email,
-              street: visitor.street,
-              city: visitor.city,
-              state_id: visitor.stateId,
-              test_date: visitor.testDate,
+              x_name: visitor.name,
+              x_email: visitor.email,
+              x_street: visitor.street,
+              x_city: visitor.city,
+              x_state_id: visitor.stateId,
+              x_test_date: visitor.testDate,
             }]
           })
       newScreenings.unshift([6, 0, []]);
-      return this.updateVisitRequest(session, id, {'screening_ids': newScreenings});
+      return this.updateVisitRequest(session, id, {"x_screening_ids": newScreenings});
     }
 
     static updateResident = async (session, id, residentBed) => {
-      return this.updateVisitRequest(session, id, {'resident_bed_id': residentBed});
+      return this.updateVisitRequest(session, id, {"x_resident_bed_id": residentBed});
     }
 
   }
 
   const _get = (rs, key) => {
-    const found = rs.find(rec => rec.key === key);
+    const found = rs.find(rec => rec.x_key === key);
     if ( found ) {
-      return found.value
+      return found.x_value
     } else {
       return undefined;
     }

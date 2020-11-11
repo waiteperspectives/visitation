@@ -125,13 +125,16 @@ odoo.define('visitation.visitationAppIO', function(require) {
   }
 
   class IO {
-
     static fetchStates = async (session) => {
       return session.searchRead('res.country.state', [['country_id', '=', 233]], ["id", "name"]);
     }
 
     static fetchBeds = async (session) => {
-      return session.searchRead('resident.bed', [], ["id", "unit_id", "room_id", "bed_position"]);
+      const bedResult = await session.searchRead('resident.bed', [], ["id", "unit_id", "room_id", "bed_position"])
+      bedResult.data.result.forEach(bed => {
+        bed.bed_id = [bed.id, bed.bed_position];
+      });
+      return new Promise(resolve => resolve(bedResult));
     }
 
     static fetchContent = async (session) => {
@@ -152,7 +155,40 @@ odoo.define('visitation.visitationAppIO', function(require) {
       return session.write('visit.request', id, vals);
     };
 
+    static updateRequestedAvailabilityId = async (session, id, availabilitySlotId) => {
+      return this.updateVisitRequest(session, id, {'requested_availability_id': availabilitySlotId});
+    }
+
+    static updateVisitorScreenings = async (session, id, visitors) => {
+      const newScreenings = visitors.map(visitor => {
+            return [0, 0, {
+              name: visitor.name,
+              email: visitor.email,
+              street: visitor.street,
+              city: visitor.city,
+              state_id: visitor.stateId,
+              test_date: visitor.testDate,
+            }]
+          })
+      newScreenings.unshift([6, 0, []]);
+      return this.updateVisitRequest(session, id, {'screening_ids': newScreenings});
+    }
+
+    static updateResident = async (session, id, residentBed) => {
+      return this.updateVisitRequest(session, id, {'resident_bed_id': residentBed});
+    }
+
   }
 
-  return { IO, OdooSession };
+  const _get = (rs, key) => {
+    const found = rs.find(rec => rec.key === key);
+    if ( found ) {
+      return found.value
+    } else {
+      return undefined;
+    }
+  };
+
+  return { IO, OdooSession, _get };
 });
+

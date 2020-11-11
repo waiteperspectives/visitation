@@ -1,7 +1,7 @@
 odoo.define('visitation.visitationAppMain', function(require) {
   'use strict';
 
-  const { IO, OdooSession } = require('visitation.visitationAppIO');
+  const { IO, OdooSession, _get } = require('visitation.visitationAppIO');
   const { ResidentForm } = require('visitation.visitationAppResidentForm');
   const { VisitorForm } = require('visitation.visitationAppVisitorForm');
   const { SchedulingForm } = require('visitation.visitationAppSchedulingForm');
@@ -81,31 +81,19 @@ odoo.define('visitation.visitationAppMain', function(require) {
       });
 
       // must wait for step 1
-      await IO.fetchBeds(this.session).then(rs => {
-        const self = this;
-        rs.data.result.forEach(bed => {
-          bed.bed_id = [bed.id, bed.bed_position];
-          self.state.dataValues.beds = rs.data.result;
-        });
-      });
+      const bedResult = await IO.fetchBeds(this.session);
+      this.state.dataValues.beds = bedResult.data.result;
 
-      await IO.fetchContent(this.session).then(x => {
-        const rs = x.data.result;
-        const get = (key) => {
-          const found = rs.find(rec => rec.key === key);
-          if ( found ) {
-            return found.value
-          } else {
-            return undefined;
-          }
-        };
-        this.state.steps[0].heading = get('heading1') || "Where will you be visiting?";
-        this.state.steps[1].heading = get('heading2') || "Who will be visiting?";
-        this.state.steps[2].heading = get('heading3') || "When would you like to visit?";
-        this.state.dataValues.messages.noAvailability = get('noAvailability') || "We're sorry, given your request, we don't have any time slots that can accomodate you.";
-        this.state.dataValues.messages.visitationNotOpen = get('visitationNotOpen') || "We're sorry. Visitation is currently not open. Check back later.";
-        this.state.visitRequest.visitConfirmationMessage = get('visitConfirmationMessage') || "A confirmation email has been sent to your email. Please call us if you unable to make your visit."
-      });
+      const contentResult = await IO.fetchContent(this.session);
+      const content = contentResult.data.result;
+      const get = key => _get(content, key);
+
+      this.state.steps[0].heading = get('heading1') || "Where will you be visiting?";
+      this.state.steps[1].heading = get('heading2') || "Who will be visiting?";
+      this.state.steps[2].heading = get('heading3') || "When would you like to visit?";
+      this.state.dataValues.messages.noAvailability = get('noAvailability') || "We're sorry, given your request, we don't have any time slots that can accomodate you.";
+      this.state.dataValues.messages.visitationNotOpen = get('visitationNotOpen') || "We're sorry. Visitation is currently not open. Check back later.";
+      this.state.visitRequest.visitConfirmationMessage = get('visitConfirmationMessage') || "A confirmation email has been sent to your email. Please call us if you unable to make your visit."
 
       IO.fetchStates(this.session).then(rs => {
         this.state.dataValues.states = rs.data.result;
@@ -178,10 +166,10 @@ odoo.define('visitation.visitationAppMain', function(require) {
     residentFormSubmit = (vals) => {
       const self = this;
       Object.assign(this.state.visitRequest, vals);
-      IO.updateVisitRequest(
+      IO.updateResident(
         this.session, 
         this.state.visitRequest.visitRequestId,
-        {'resident_bed_id': this.state.visitRequest.residentBed}
+        this.state.visitRequest.residentBed
       ).then(rs => {
         self.notifyOnError(rs, () => {
           this.stepForward()
@@ -194,21 +182,10 @@ odoo.define('visitation.visitationAppMain', function(require) {
     visitorFormSubmit = (vals) => {
       const self = this;
       Object.assign(this.state.visitRequest, vals);
-      const newScreenings = this.state.visitRequest.visitors.map(visitor => {
-            return [0, 0, {
-              name: visitor.name,
-              email: visitor.email,
-              street: visitor.street,
-              city: visitor.city,
-              state_id: visitor.stateId,
-              test_date: visitor.testDate,
-            }]
-          })
-      newScreenings.unshift([6, 0, []]);
-      IO.updateVisitRequest(
+      IO.updateVisitorScreenings(
         this.session, 
         this.state.visitRequest.visitRequestId,
-        {'screening_ids': newScreenings}
+        this.state.visitRequest.visitors
       ).then(rs => {
         self.notifyOnError(rs, () => {
           IO.fetchAvailabilities(
@@ -228,20 +205,17 @@ odoo.define('visitation.visitationAppMain', function(require) {
       });
     }
 
-    schedulingFormSubmit = (vals) => {
+    schedulingFormSubmit = async (vals) => {
       const self = this;
       Object.assign(this.state.visitRequest, vals);
-      IO.updateVisitRequest(
+      const rs = await IO.updateRequestedAvailabilityId(
         this.session, 
         this.state.visitRequest.visitRequestId,
-        {'requested_availability_id': this.state.visitRequest.availabilitySlot}
-      ).then(rs => {
-        self.notifyOnError(rs, () => {
-          this.stepForward()
-        });
-      }).catch(err => {
+        this.state.visitRequest.availabilitySlot
+      ).catch(err => {
         this.notify(err);
       });
+      self.notifyOnError(rs, () => this.stepForward());
     }
 
   }

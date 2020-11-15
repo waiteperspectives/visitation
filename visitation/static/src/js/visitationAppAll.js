@@ -174,10 +174,15 @@ odoo.define("visitation.visitationAppIO", function(require) {
     static updateVisitorScreenings = async (session, id, visitors) => {
       const newScreenings = visitors.map(visitor => {
             return [0, 0, {
-              x_name: visitor.name,
+              x_first_name: visitor.firstname,
+              x_last_name: visitor.lastname,
               x_email: visitor.email,
               x_street: visitor.street,
+              x_street2: visitor.street2,
+              x_phone: visitor.phone,
+              x_phone2: visitor.phone2,
               x_city: visitor.city,
+              x_zip: visitor.zip,
               x_state_id: visitor.stateId,
               x_test_date: visitor.testDate,
             }]
@@ -213,9 +218,11 @@ odoo.define('visitation.visitationAppBase', function () {
   class Visitor {
     constructor(kwargs) {
       this.id = Math.floor(Math.random() * 10000);
-      this.name = kwargs.name || "";
+      this.firstname = kwargs.firstname || "";
+      this.lastname = kwargs.lastname || "";
       this.email = kwargs.email || "";
       this.phone = kwargs.phone || "";
+      this.phone2 = kwargs.phone2 || "";
       this.street = kwargs.street || "";
       this.city = kwargs.city || "";
       this.stateId = kwargs.stateId || "";
@@ -226,9 +233,11 @@ odoo.define('visitation.visitationAppBase', function () {
     }
 
     isValid = () => {
-      if ( !this.name ) { return false; }
+      if ( !this.firstname ) { return false; }
+      if ( !this.lastname ) { return false; }
       if ( !this.email ) { return false; }
       if ( !this.phone ) { return false; }
+      if ( !this.phone2 ) { return false; }
       if ( !this.street ) { return false; }
       if ( !this.city ) { return false; }
       if ( !this.stateId ) { return false; }
@@ -236,6 +245,7 @@ odoo.define('visitation.visitationAppBase', function () {
       if ( !this.testDate instanceof Date || isNaN(this.testDate) ) { return false; }
       if ( !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email) ) { return false; }
       if ( !/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(this.phone) ) { return false; }
+      if ( !/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(this.phone2) ) { return false; }
       return true
     }
 
@@ -468,32 +478,39 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       <div class="VisitorCard card mb-3">
         <div class="card-body">
           <div class="form-group">
-            <label for="visitorName">
-              Name
+            <label for="visitorFirstName">
+              First Name
               <span class="text-danger">*</span>
             </label>
-            <input class="form-control" name="visitorName" t-model="state.visitorName" t-on-change="update" />
+            <input class="form-control" name="visitorFirstName" t-model="state.visitorFirstName" t-on-change="update" />
+          </div>
+          <div class="form-group">
+            <label for="visitorLastName">
+              Last Name
+              <span class="text-danger">*</span>
+            </label>
+            <input class="form-control" name="visitorLastName" t-model="state.visitorLastName" t-on-change="update" />
           </div>
           <div class="form-group">
             <label for="visitorEmail">
               Email
               <span class="text-danger">*</span>
             </label>
-            <input class="form-control" t-att-class="isValidEmail(state.visitorEmail)" name="visitorEmail" t-model="state.visitorEmail" t-on-change="update" t-on-blur="firstPassComplete" />
+            <input class="form-control" t-att-class="isValidEmail(state.visitorEmail)" name="visitorEmail" t-model="state.visitorEmail" t-on-change="update" t-on-blur="firstPassCompleteEmail" />
           </div>
           <div class="form-group">
             <label for="visitorPhone">
-              Phone
+              Day Phone
               <span class="text-danger">*</span>
             </label>
-            <input type="tel" class="form-control" t-att-class="isValidPhone(state.visitorPhone)" name="visitorPhone" t-on-change="update" t-on-blur="firstPassComplete" t-on-input="phoneMask" />
+            <input type="tel" class="form-control" t-att-class="isValidPhone(state.visitorPhone)" name="visitorPhone" t-on-change="update" t-on-blur="firstPassCompletePhone" t-on-input="phoneMask" t-att-value="state.visitorPhone" />
           </div>
           <div class="form-group">
-            <label for="visitorTestDate">
-              Test Date
+            <label for="visitorPhone2">
+              Evening Phone
               <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" />
+            <input type="tel" class="form-control" t-att-class="isValidPhone2(state.visitorPhone2)" name="visitorPhone2" t-on-change="update" t-on-blur="firstPassCompletePhone2" t-on-input="phoneMask" t-att-value="state.visitorPhone2" />
           </div>
           <div class="form-group">
             <label for="visitorStreet">
@@ -532,6 +549,13 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
             </label>
             <input class="form-control" name="visitorZip" t-model="state.visitorZip" t-on-change="update" />
           </div>
+          <div class="form-group">
+            <label for="visitorTestDate">
+              What is the date you have an appointment to be tested?
+              <span class="text-danger">*</span>
+            </label>
+            <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" t-att-value="state.visitorTestDate" />
+          </div>
         </div>
       </div>
     `;
@@ -546,11 +570,21 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
        return 'is-invalid';
       }
     }
+    isValidPhone2 = (phone) => {
+      if ( this.visitorPhone2FirstPass.flag ) {
+        return true;
+      }
+      if (/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(phone)) {
+         return '';
+      } else {
+       return 'is-invalid';
+      }
+    }
     isValidPhone = (phone) => {
       if ( this.visitorPhoneFirstPass.flag ) {
         return true;
       }
-      if (/^.*/.test(phone)) {
+      if (/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(phone)) {
          return '';
       } else {
        return 'is-invalid';
@@ -558,15 +592,24 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
     }
 
     visitorEmailFirstPass = useState({flag: true});
-    visitorPhoneFirstPass = useState({flag: true});
-    firstPassComplete = () => {
+    firstPassCompleteEmail = () => {
       this.visitorEmailFirstPass.flag = false;
+    }
+    visitorPhoneFirstPass = useState({flag: true});
+    firstPassCompletePhone = () => {
+      this.visitorPhoneFirstPass.flag = false;
+    }
+    visitorPhone2FirstPass = useState({flag: true});
+    firstPassCompletePhone2 = () => {
+      this.visitorPhone2FirstPass.flag = false;
     }
 
     state = useState({
-      visitorName: this.props.visitor.name,
+      visitorFirstName: this.props.visitor.firstname,
+      visitorLastName: this.props.visitor.lastname,
       visitorEmail: this.props.visitor.email,
       visitorPhone: this.props.visitor.phone,
+      visitorPhone2: this.props.visitor.phone2,
       visitorStreet: this.props.visitor.street,
       visitorCity: this.props.visitor.city,
       visitorState: this.props.visitor.stateId || this.props.states.find(x => x.name == 'New York').id,
@@ -578,16 +621,23 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
     phoneMask = (e) => {
       const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
       e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-      this.state.visitorPhone = e.target.value;
+      if ( e.target.name === 'visitorPhone' ) {
+        this.state.visitorPhone = e.target.value;
+      }
+      if ( e.target.name === 'visitorPhone2' ) {
+        this.state.visitorPhone2 = e.target.value;
+      }
     }
 
     update = () => {
       const state = this.props.states.find(s => s.id === parseInt(this.state.visitorState));
       const stateName = state ? state.name : "";
       const visitor = new Visitor({
-        name: this.state.visitorName,
+        firstname: this.state.visitorFirstName,
+        lastname: this.state.visitorLastName,
         email: this.state.visitorEmail,
         phone: this.state.visitorPhone,
+        phone2: this.state.visitorPhone2,
         street: this.state.visitorStreet,
         city: this.state.visitorCity,
         stateId: this.state.visitorState,
@@ -616,6 +666,9 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <VisitorCard visitor="visitor" update="updateVisitor" states="props.dataValues.states" />
             </t>
+            <p class="text-muted font-italic">
+            New York State permits 2 visitors for this upcoming visit. One must be 18 or older.
+            </p>
             <div t-if="state.visitors.length &lt; 2" class="d-flex justify-content-start mb-2">
               <button class="btn btn-link" type="button" t-on-click="addVisitor">
                 <i class="fa fa-plus" />
@@ -879,12 +932,12 @@ odoo.define('visitation.visitationAppMain', function(require) {
       const content = contentResult.data.result;
       const get = key => _get(content, key);
 
-      this.state.steps[0].heading = get('heading1') || "Where will you be visiting?";
+      this.state.steps[0].heading = get('heading1') || "Where does the resident reside that you wish to visit?";
       this.state.steps[1].heading = get('heading2') || "Who will be visiting?";
       this.state.steps[2].heading = get('heading3') || "When would you like to visit?";
       this.state.dataValues.messages.noAvailability = get('noAvailability') || "We're sorry, given your request, we don't have any time slots that can accomodate you.";
       this.state.dataValues.messages.visitationNotOpen = get('visitationNotOpen') || "We're sorry. Visitation is currently not open. Check back later.";
-      this.state.visitRequest.visitConfirmationMessage = get('visitConfirmationMessage') || "A confirmation email has been sent to your email. Please call us if you unable to make your visit."
+      this.state.visitRequest.visitConfirmationMessage = get('visitConfirmationMessage') || "A confirmation email has been sent to your email. You must bring a printed hard copy of your negative test result that includes your name, date tested and negative result. Remember to arrive 15 minutes after your appointment for the screen in procedure. Please call us if you unable to make your visit."
 
       IO.fetchStates(this.session).then(rs => {
         this.state.dataValues.states = rs.data.result;

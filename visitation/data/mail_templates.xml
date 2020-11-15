@@ -29,6 +29,8 @@
           <br/><br/>
             You have scheduled a visit to ${user.company_id.name | safe}, taking place
             <strong>${object.x_visit_availability_slot_id.x_name | safe}</strong>.
+            You must bring a printed hard copy of your negative test result that includes your name, date tested and negative result.
+            Remember to arrive 15 minutes after your appointment for the screen in procedure.
             If you are unable to make your visit for any reason, please contact us.
           <br/><br/>
             See you soon!
@@ -47,8 +49,10 @@
       <td >
         <p>${user.company_id.phone | safe}</p>
       </td>
-      <td style="width: 266px;">
-        <p>${user.company_id.email | safe}</p>
+      <td style="width: 266px;text-align:left;">
+        <p>
+          Call your social worker today if you need to alter or cancel this booking.
+        </p>
       </td>
     </tr>
   </table>

@@ -73,7 +73,7 @@
 
     <record id="visitConfirmationMessage" model="x_visitation_content">
       <field name="x_key">visitConfirmationMessage</field>
-      <field name="x_value">A confirmation email has been sent to your email. Please call us if you are unable to make your visit.</field>
+      <field name="x_value">A confirmation email has been sent to your email. You must bring a printed hard copy of your negative test result that includes your name, date tested and negative result. Remember to arrive 15 minutes after your appointment for the screen in procedure. Please call us if you are unable to make your visit.</field>
     </record>
 
 

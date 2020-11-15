@@ -83,7 +83,7 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
           </div>
           <div class="form-group">
             <label for="visitorTestDate">
-              Test Date
+              What is the date you have an appointment to be tested?
               <span class="text-danger">*</span>
             </label>
             <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" t-att-value="state.visitorTestDate" />
@@ -198,6 +198,9 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <VisitorCard visitor="visitor" update="updateVisitor" states="props.dataValues.states" />
             </t>
+            <p class="text-muted font-italic">
+            New York State permits 2 visitors for this upcoming visit. One must be 18 or older.
+            </p>
             <div t-if="state.visitors.length &lt; 2" class="d-flex justify-content-start mb-2">
               <button class="btn btn-link" type="button" t-on-click="addVisitor">
                 <i class="fa fa-plus" />

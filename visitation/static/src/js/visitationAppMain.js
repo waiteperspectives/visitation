@@ -88,12 +88,12 @@ odoo.define('visitation.visitationAppMain', function(require) {
       const content = contentResult.data.result;
       const get = key => _get(content, key);
 
-      this.state.steps[0].heading = get('heading1') || "Where will you be visiting?";
+      this.state.steps[0].heading = get('heading1') || "Where does the resident reside that you wish to visit?";
       this.state.steps[1].heading = get('heading2') || "Who will be visiting?";
       this.state.steps[2].heading = get('heading3') || "When would you like to visit?";
       this.state.dataValues.messages.noAvailability = get('noAvailability') || "We're sorry, given your request, we don't have any time slots that can accomodate you.";
       this.state.dataValues.messages.visitationNotOpen = get('visitationNotOpen') || "We're sorry. Visitation is currently not open. Check back later.";
-      this.state.visitRequest.visitConfirmationMessage = get('visitConfirmationMessage') || "A confirmation email has been sent to your email. Please call us if you unable to make your visit."
+      this.state.visitRequest.visitConfirmationMessage = get('visitConfirmationMessage') || "A confirmation email has been sent to your email. You must bring a printed hard copy of your negative test result that includes your name, date tested and negative result. Remember to arrive 15 minutes after your appointment for the screen in procedure. Please call us if you unable to make your visit."
 
       IO.fetchStates(this.session).then(rs => {
         this.state.dataValues.states = rs.data.result;

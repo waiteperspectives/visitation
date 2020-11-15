@@ -37,6 +37,7 @@ class ResidentBed(models.Model):
         [
             ("left", "Left"),
             ("right", "Right"),
+            ("private", "Private"),
         ],
         required=True,
         string="Bed Position",

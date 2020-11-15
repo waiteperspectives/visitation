@@ -42,10 +42,27 @@
       />
 
     <menuitem
+        id="menu_visitation_resident_unit"
+        name="Resident Units"
+        action="action_resident_unit"
+        parent="menu_visitation_config"
+        sequence="0"
+      />
+
+    <menuitem
+        id="menu_visitation_resident_room"
+        name="Resident Rooms"
+        action="action_resident_room"
+        parent="menu_visitation_config"
+        sequence="1"
+      />
+
+    <menuitem
         id="menu_visitation_resident_bed"
-        name="Beds"
+        name="Resident Beds"
         action="action_resident_bed"
         parent="menu_visitation_config"
+        sequence="2"
       />
 
     <menuitem

@@ -7,8 +7,18 @@
       <field name="model">x_visitation_content</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="x_key" />
-          <field name="x_value" />
+          <field name="x_key"  />
+          <field name="x_value"  />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_resident_unit_tree" model="ir.ui.view">
+      <field name="name">view_resident_unit_tree</field>
+      <field name="model">x_resident_unit</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="x_name"  />
         </tree>
       </field>
     </record>
@@ -18,7 +28,7 @@
       <field name="model">x_resident_room</field>
       <field name="arch" type="xml">
         <tree editable="bottom">
-          <field name="x_name" />
+          <field name="x_name"  />
         </tree>
       </field>
     </record>
@@ -27,11 +37,11 @@
       <field name="name">view_resident_bed_tree</field>
       <field name="model">x_resident_bed</field>
       <field name="arch" type="xml">
-        <tree>
-          <field name="x_name" />
-          <field name="x_unit_id" />
-          <field name="x_room_id" />
-          <field name="x_bed_position" />
+        <tree editable="bottom">
+          <field name="x_name"  />
+          <field name="x_unit_id"  />
+          <field name="x_room_id"  />
+          <field name="x_bed_position"  />
         </tree>
       </field>
     </record>
@@ -45,11 +55,19 @@
           decoration-danger="x_remaining_capacity &lt; 1"
           >
           <field name="x_availability_start_time" widget="daterange"
-            options="{'related_end_date': 'x_availability_end_time'}"/>
+            options="{'related_end_date': 'x_availability_end_time'}"
+            
+            />
           <field name="x_availability_end_time" widget="daterange"
-            options="{'related_start_date': 'x_availability_start_time'}"/>
-          <field name="x_capacity" />
-          <field name="x_remaining_capacity" />
+            options="{'related_start_date': 'x_availability_start_time'}"
+            
+            />
+          <field name="x_eligible_unit_ids"
+            widget="many2many_tags"
+            string="Only These Units"
+            />
+          <field name="x_capacity"  />
+          <field name="x_remaining_capacity"  />
         </tree>
       </field>
     </record>
@@ -58,17 +76,22 @@
       <field name="name">view_visitor_screening_tree</field>
       <field name="model">x_visitor_screening</field>
       <field name="arch" type="xml">
-        <tree editable="bottom">
-          <field name="x_name" />
-          <field name="x_email" />
-          <field name="x_street" />
-          <field name="x_street2" />
-          <field name="x_zip" />
-          <field name="x_city" />
-          <field name="x_state_id" />
-          <field name="x_country_id" groups="base.group_no_one" />
-          <field name="x_phone" />
-          <field name="x_test_date" />
+        <tree>
+          <field name="x_name"  />
+          <field name="x_email"  />
+          <field name="x_street"  />
+          <field name="x_street2"  />
+          <field name="x_zip"  />
+          <field name="x_city"  />
+          <field name="x_state_id"  />
+          <field
+            name="x_country_id"
+            groups="base.group_no_one"
+            string="Country (DEBUG)"
+            />
+          <field name="x_phone"  />
+          <field name="x_phone2"  />
+          <field name="x_test_date"  />
         </tree>
       </field>
     </record>
@@ -78,18 +101,36 @@
       <field name="model">x_visitor_screening</field>
       <field name="arch" type="xml">
         <form string="view_visitor_screening_form">
-          <group>
-            <field name="x_name" />
-            <field name="x_email" />
-            <field name="x_street" />
-            <field name="x_street2" />
-            <field name="x_zip" />
-            <field name="x_city" />
-            <field name="x_state_id" />
-            <field name="x_country_id" groups="base.group_no_one" />
-            <field name="x_phone" />
-            <field name="x_test_date" />
-          </group>
+          <sheet>
+            <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('x_active', '=', True)]}"/>
+            <field name="x_active" invisible="1" />
+            <group>
+              <group string="Contact Information">
+                <field name="x_first_name"  />
+                <field name="x_last_name"  />
+                <field name="x_email"  />
+                <field name="x_phone"  />
+                <field name="x_phone2"  />
+              </group>
+              <group string="Address">
+                <field name="x_street"  />
+                <field name="x_street2"  />
+                <field name="x_zip"  />
+                <field name="x_city"  />
+                <field name="x_state_id"  />
+                <field
+                  name="x_country_id"
+                  groups="base.group_no_one"
+                  string="Country (DEBUG)"
+                  />
+              </group>
+            </group>
+            <group>
+              <group>
+                <field name="x_test_date"  />
+              </group>
+            </group>
+          </sheet>
         </form>
       </field>
     </record>
@@ -98,11 +139,11 @@
       <field name="name">view_scheduled_visit_tree</field>
       <field name="model">x_scheduled_visit</field>
       <field name="arch" type="xml">
-        <tree create="false">
-          <field name="x_visit_availability_slot_id" />
+        <tree create="false" edit="false">
+          <field name="x_visit_availability_slot_id"  />
           <field name="x_resident_bed_id" />
-          <field name="x_visitor_screening_ids" widget="many2many_tags" />
-          <field name="x_visit_request_id" groups="base.group_no_one" />
+          <field name="x_visitor_screening_ids" widget="many2many_tags"  />
+          <field name="x_visit_request_id" />
         </tree>
       </field>
     </record>
@@ -111,25 +152,27 @@
       <field name="name">view_scheduled_visit_form</field>
       <field name="model">x_scheduled_visit</field>
       <field name="arch" type="xml">
-        <form string="view_scheduled_visit_form">
+        <form string="view_scheduled_visit_form" create="false" edit="false">
             <sheet>
+              <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('x_active', '=', True)]}"/>
+              <field name="x_active" invisible="1" />
               <div class="oe_title">
                 <h1 class="o_row">
-                    <field name="x_name" />
+                    <field name="x_name"  />
                   </h1>
               </div>
               <group>
                 <group>
-                  <field name="x_visit_availability_slot_id" />
+                  <field name="x_visit_availability_slot_id"  />
                 </group>
                 <group>
-                  <field name="x_resident_bed_id" />
-                  <field name="x_visit_request_id" groups="base.group_no_one" />
+                  <field name="x_resident_bed_id"  />
+                  <field name="x_visit_request_id" />
                 </group>
               </group>
               <notebook>
                 <page string="Visitors">
-                  <field name="x_visitor_screening_ids" />
+                  <field name="x_visitor_screening_ids"  />
                 </page>
               </notebook>
               <div class="oe_chatter">
@@ -149,14 +192,22 @@
         <tree
           decoration-success="x_scheduled_visit_id != False"
           >
-          <field name="id" groups="base.group_no_one" />
+        <field
+          name="id"
+          groups="base.group_no_one"
+          string="Id (DEBUG)"
+          />
           <field name="create_date" string="Request Created" />
-          <field name="write_date" string="Request Updated" />
-          <field name="x_resident_bed_id" />
-          <field name="x_screening_ids" widget="many2many_tags" />
-          <field name="x_requested_availability_id" />
-          <field name="x_scheduled_visit_id" string="Result" />
-          <field name="x_availability_ids" widget="many2many_tags" groups="base.group_no_one" />
+          <field name="x_resident_bed_id" string="Resident Bed" />
+          <field name="x_screening_ids" widget="many2many_tags"  />
+          <field name="x_requested_availability_id"  />
+          <field name="x_scheduled_visit_id"  />
+          <field
+            name="x_availability_ids"
+            widget="many2many_tags"
+            groups="base.group_no_one"
+            string="Available Slots (DEBUG)"
+            />
         </tree>
       </field>
     </record>
@@ -169,32 +220,44 @@
             <sheet>
               <div class="oe_title">
                 <h1 class="o_row">
-                    <field name="x_name" />
+                    <field name="x_name"  />
                   </h1>
               </div>
-              <group>
+              <group string="Visitor Information">
                 <group>
-                  <field name="x_resident_bed_id" />
-                  <field name="x_requested_availability_id"
-                    domain="[('id', 'in', x_availability_ids)]"
-                    />
-                </group>
-                <group>
-                  <field name="x_scheduled_visit_id"
-                    attrs="{'invisible': [('x_scheduled_visit_id', '=', False)]}"
-                    />
+                  <field name="x_resident_bed_id"  />
                 </group>
               </group>
               <notebook>
                 <page string="Visitors">
-                  <field name="x_screening_ids"
-                    domain="[('x_visit_request_ids', '=', False)]"
-                    />
+                  <field name="x_screening_ids" nolabel="1" />
                 </page>
-                <page string="Available Times" groups="base.group_no_one">
+                <page
+                  string="Available Slots (DEBUG)"
+                  groups="base.group_no_one">
                   <field name="x_availability_ids" />
                 </page>
               </notebook>
+              <group string="Requested Slot">
+                <field name="x_requested_availability_id"
+                  domain="[('id', 'in', x_availability_ids)]"
+                  attrs="{'invisible': [('x_screening_ids', '=', []), ('x_scheduled_visit_id', '=', False)]}"
+                  widget="radio"
+                  nolabel="1"
+                  />
+                <br/>
+                <div class="alert alert-info" role="alert" attrs="{'invisible': ['|', '|', ('x_availability_ids', '!=', []), ('x_scheduled_visit_id', '!=', False), ('x_screening_ids', '=', [])]}">
+                  Based on the resident and visitor information, there are no availabilities to choose from.
+                </div>
+              </group>
+              <group string="Result"
+                attrs="{'invisible': [('x_scheduled_visit_id', '=', False)]}"
+                >
+                <field name="x_scheduled_visit_id"
+                  attrs="{'invisible': [('x_scheduled_visit_id', '=', False)]}"
+                  nolabel="1"
+                  />
+              </group>
             </sheet>
         </form>
       </field>

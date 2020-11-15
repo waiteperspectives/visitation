@@ -8,8 +8,20 @@
       <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="action_resident_unit" model="ir.actions.act_window">
+      <field name="name">Resident Units</field>
+      <field name="res_model">x_resident_unit</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_resident_room" model="ir.actions.act_window">
+      <field name="name">Resident Rooms</field>
+      <field name="res_model">x_resident_room</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
     <record id="action_resident_bed" model="ir.actions.act_window">
-      <field name="name">Beds</field>
+      <field name="name">Resident Beds</field>
       <field name="res_model">x_resident_bed</field>
       <field name="view_mode">tree,form</field>
     </record>

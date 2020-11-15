@@ -46,12 +46,6 @@
       <field name="x_room_id" ref="room_1" />
     </record>
 
-    <record id="availability_1" model="x_availability_slot">
-      <field name="x_availability_start_time" eval="datetime.now()" />
-      <field name="x_availability_end_time" eval="datetime.now() + timedelta(hours=1)" />
-      <field name="x_capacity">500</field>
-    </record>
-
     <record id="heading1" model="x_visitation_content">
       <field name="x_key">heading1</field>
       <field name="x_value">Where does your loved one reside?</field>

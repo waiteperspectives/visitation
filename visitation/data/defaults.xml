@@ -8,7 +8,7 @@
     </record>
 
     <!-- default visitor country united states -->
-    <record id="default_state_id" model="ir.default">
+    <record id="default_country_id" model="ir.default">
       <field name="field_id" ref="field_x_visitor_screening__x_country_id" />
       <field name="json_value" ref="base.us" />
     </record>

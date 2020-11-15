@@ -46,7 +46,10 @@ for rec in records.sudo():
     scheduled.message_subscribe(scheduled.x_partner_ids.ids)
     send_confirmation_email(scheduled)
         </field>
-        <field name="trigger">on_write</field>
+        <field name="trigger">on_create_or_write</field>
+        <field name="trigger_field_ids"
+          eval="[ref('field_x_visit_request__x_resident_bed_id'), ref('field_x_visit_request__x_screening_ids'),ref('field_x_visit_request__x_requested_availability_id')]"
+          />
         <field name="filter_domain"></field>
     </record>
     

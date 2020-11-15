@@ -19,3 +19,4 @@ rpc_public_visitation_scheduled_visit,rpc_public_visitation_scheduled_visit,mode
 rpc_public_visitation_visit_request,rpc_public_visitation_visit_request,model_x_visit_request,visitation.group_public_rpc_user,1,1,1,0
 
 rpc_public_auto_action,rpc_public_auto_action,base_automation.model_base_automation,visitation.group_public_rpc_user,1,0,0,0
+rpc_public_fields,rpc_public_fields,base.model_ir_model_fields,visitation.group_public_rpc_user,1,0,0,0

@@ -233,7 +233,8 @@ class VisitRequest(models.Model):
     x_active = fields.Boolean(default=True, string="Active")
     x_name = fields.Char(compute="_compute_name", store=True, string="Name")
     x_resident_bed_id = fields.Many2one(
-        comodel_name="x_resident_bed", string="Resident Bed"
+        comodel_name="x_resident_bed",
+        string="Resident Bed",
     )
 
     # front end writes screenings, auto-action builds visitors

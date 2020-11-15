@@ -174,10 +174,15 @@ odoo.define("visitation.visitationAppIO", function(require) {
     static updateVisitorScreenings = async (session, id, visitors) => {
       const newScreenings = visitors.map(visitor => {
             return [0, 0, {
-              x_name: visitor.name,
+              x_first_name: visitor.firstname,
+              x_last_name: visitor.lastname,
               x_email: visitor.email,
               x_street: visitor.street,
+              x_street2: visitor.street2,
+              x_phone: visitor.phone,
+              x_phone2: visitor.phone2,
               x_city: visitor.city,
+              x_zip: visitor.zip,
               x_state_id: visitor.stateId,
               x_test_date: visitor.testDate,
             }]

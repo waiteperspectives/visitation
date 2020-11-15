@@ -7,9 +7,11 @@ odoo.define('visitation.visitationAppBase', function () {
   class Visitor {
     constructor(kwargs) {
       this.id = Math.floor(Math.random() * 10000);
-      this.name = kwargs.name || "";
+      this.firstname = kwargs.firstname || "";
+      this.lastname = kwargs.lastname || "";
       this.email = kwargs.email || "";
       this.phone = kwargs.phone || "";
+      this.phone2 = kwargs.phone2 || "";
       this.street = kwargs.street || "";
       this.city = kwargs.city || "";
       this.stateId = kwargs.stateId || "";
@@ -20,9 +22,11 @@ odoo.define('visitation.visitationAppBase', function () {
     }
 
     isValid = () => {
-      if ( !this.name ) { return false; }
+      if ( !this.firstname ) { return false; }
+      if ( !this.lastname ) { return false; }
       if ( !this.email ) { return false; }
       if ( !this.phone ) { return false; }
+      if ( !this.phone2 ) { return false; }
       if ( !this.street ) { return false; }
       if ( !this.city ) { return false; }
       if ( !this.stateId ) { return false; }
@@ -30,6 +34,7 @@ odoo.define('visitation.visitationAppBase', function () {
       if ( !this.testDate instanceof Date || isNaN(this.testDate) ) { return false; }
       if ( !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email) ) { return false; }
       if ( !/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(this.phone) ) { return false; }
+      if ( !/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(this.phone2) ) { return false; }
       return true
     }
 

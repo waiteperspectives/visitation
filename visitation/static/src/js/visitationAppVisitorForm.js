@@ -10,32 +10,39 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       <div class="VisitorCard card mb-3">
         <div class="card-body">
           <div class="form-group">
-            <label for="visitorName">
-              Name
+            <label for="visitorFirstName">
+              First Name
               <span class="text-danger">*</span>
             </label>
-            <input class="form-control" name="visitorName" t-model="state.visitorName" t-on-change="update" />
+            <input class="form-control" name="visitorFirstName" t-model="state.visitorFirstName" t-on-change="update" />
+          </div>
+          <div class="form-group">
+            <label for="visitorLastName">
+              Last Name
+              <span class="text-danger">*</span>
+            </label>
+            <input class="form-control" name="visitorLastName" t-model="state.visitorLastName" t-on-change="update" />
           </div>
           <div class="form-group">
             <label for="visitorEmail">
               Email
               <span class="text-danger">*</span>
             </label>
-            <input class="form-control" t-att-class="isValidEmail(state.visitorEmail)" name="visitorEmail" t-model="state.visitorEmail" t-on-change="update" t-on-blur="firstPassComplete" />
+            <input class="form-control" t-att-class="isValidEmail(state.visitorEmail)" name="visitorEmail" t-model="state.visitorEmail" t-on-change="update" t-on-blur="firstPassCompleteEmail" />
           </div>
           <div class="form-group">
             <label for="visitorPhone">
-              Phone
+              Day Phone
               <span class="text-danger">*</span>
             </label>
-            <input type="tel" class="form-control" t-att-class="isValidPhone(state.visitorPhone)" name="visitorPhone" t-on-change="update" t-on-blur="firstPassComplete" t-on-input="phoneMask" />
+            <input type="tel" class="form-control" t-att-class="isValidPhone(state.visitorPhone)" name="visitorPhone" t-on-change="update" t-on-blur="firstPassCompletePhone" t-on-input="phoneMask" t-att-value="state.visitorPhone" />
           </div>
           <div class="form-group">
-            <label for="visitorTestDate">
-              Test Date
+            <label for="visitorPhone2">
+              Evening Phone
               <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" />
+            <input type="tel" class="form-control" t-att-class="isValidPhone2(state.visitorPhone2)" name="visitorPhone2" t-on-change="update" t-on-blur="firstPassCompletePhone2" t-on-input="phoneMask" t-att-value="state.visitorPhone2" />
           </div>
           <div class="form-group">
             <label for="visitorStreet">
@@ -74,6 +81,13 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
             </label>
             <input class="form-control" name="visitorZip" t-model="state.visitorZip" t-on-change="update" />
           </div>
+          <div class="form-group">
+            <label for="visitorTestDate">
+              Test Date
+              <span class="text-danger">*</span>
+            </label>
+            <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" t-att-value="state.visitorTestDate" />
+          </div>
         </div>
       </div>
     `;
@@ -88,11 +102,21 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
        return 'is-invalid';
       }
     }
+    isValidPhone2 = (phone) => {
+      if ( this.visitorPhone2FirstPass.flag ) {
+        return true;
+      }
+      if (/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(phone)) {
+         return '';
+      } else {
+       return 'is-invalid';
+      }
+    }
     isValidPhone = (phone) => {
       if ( this.visitorPhoneFirstPass.flag ) {
         return true;
       }
-      if (/^.*/.test(phone)) {
+      if (/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(phone)) {
          return '';
       } else {
        return 'is-invalid';
@@ -100,15 +124,24 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
     }
 
     visitorEmailFirstPass = useState({flag: true});
-    visitorPhoneFirstPass = useState({flag: true});
-    firstPassComplete = () => {
+    firstPassCompleteEmail = () => {
       this.visitorEmailFirstPass.flag = false;
+    }
+    visitorPhoneFirstPass = useState({flag: true});
+    firstPassCompletePhone = () => {
+      this.visitorPhoneFirstPass.flag = false;
+    }
+    visitorPhone2FirstPass = useState({flag: true});
+    firstPassCompletePhone2 = () => {
+      this.visitorPhone2FirstPass.flag = false;
     }
 
     state = useState({
-      visitorName: this.props.visitor.name,
+      visitorFirstName: this.props.visitor.firstname,
+      visitorLastName: this.props.visitor.lastname,
       visitorEmail: this.props.visitor.email,
       visitorPhone: this.props.visitor.phone,
+      visitorPhone2: this.props.visitor.phone2,
       visitorStreet: this.props.visitor.street,
       visitorCity: this.props.visitor.city,
       visitorState: this.props.visitor.stateId || this.props.states.find(x => x.name == 'New York').id,
@@ -120,16 +153,23 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
     phoneMask = (e) => {
       const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
       e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-      this.state.visitorPhone = e.target.value;
+      if ( e.target.name === 'visitorPhone' ) {
+        this.state.visitorPhone = e.target.value;
+      }
+      if ( e.target.name === 'visitorPhone2' ) {
+        this.state.visitorPhone2 = e.target.value;
+      }
     }
 
     update = () => {
       const state = this.props.states.find(s => s.id === parseInt(this.state.visitorState));
       const stateName = state ? state.name : "";
       const visitor = new Visitor({
-        name: this.state.visitorName,
+        firstname: this.state.visitorFirstName,
+        lastname: this.state.visitorLastName,
         email: this.state.visitorEmail,
         phone: this.state.visitorPhone,
+        phone2: this.state.visitorPhone2,
         street: this.state.visitorStreet,
         city: this.state.visitorCity,
         stateId: this.state.visitorState,

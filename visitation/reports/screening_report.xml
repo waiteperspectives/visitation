@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+
+    <template id="report_visitor_screening">
+      <t t-call="web.html_container">
+          <t t-call="web.external_layout">
+            <t t-foreach="docs.sorted(key=lambda doc: (doc.x_visit_availability_slot_id.x_availability_start_time, doc.x_resident_bed_id))" t-as="doc">
+              <div style="margin-bottom: 32px;">
+                <table style="width:100%;border:none">
+                  <tr>
+                    <td style="border-right:none;">
+                      <h5 t-esc="doc.x_visit_availability_slot_id.x_name" />
+                    </td>
+                    <td style="border-right:none;">
+                    </td>
+                    <td style="border-right:none;text-align: right;">
+                      <h5 t-esc="doc.x_resident_bed_id.x_name" />
+                    </td>
+                  </tr>
+                </table>
+                <table style="width:100%;">
+                  <thead>
+                    <th>Visitor Name</th>
+                    <th>Temperature</th>
+                    <th>Test Result</th>
+                  </thead>
+                  <t t-foreach="doc.x_visitor_screening_ids" t-as="visitor">
+                    <tr>
+                      <td style="border-bottom: 1px solid #495057;">
+                        <h4 t-esc="visitor.x_name" style="padding-top: 30px;"/>
+                      </td>
+                      <td style="border-bottom: 1px solid #495057;">
+                      </td>
+                      <td style="border-bottom: 1px solid #495057;">
+                      </td>
+                    </tr>
+                  </t>
+                </table>
+              </div>
+            </t>
+        </t>
+      </t>
+    </template>
+
+    <record id="action_report_visitor_screening" model="ir.actions.report">
+      <field name="name">Visitor Screening</field>
+      <field name="print_report_name">"Visitor Screening"</field>
+      <field name="report_type">qweb-html</field>
+      <field name="model">x_scheduled_visit</field>
+      <field name="binding_model_id" ref="model_x_scheduled_visit" />
+      <field name="binding_type">report</field>
+      <field name="report_name">visitation.report_visitor_screening</field>
+      <field name="report_file">visitation.report_visitor_screening</field>
+    </record>
+    
+  </data>
+</odoo>

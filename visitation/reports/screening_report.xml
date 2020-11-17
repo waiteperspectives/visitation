@@ -5,40 +5,37 @@
     <template id="report_visitor_screening">
       <t t-call="web.html_container">
           <t t-call="web.external_layout">
-            <t t-foreach="docs.sorted(key=lambda doc: (doc.x_visit_availability_slot_id.x_availability_start_time, doc.x_resident_bed_id))" t-as="doc">
-              <div style="margin-bottom: 32px;">
-                <table style="width:100%;border:none">
-                  <tr>
-                    <td style="border-right:none;">
-                      <h5 t-esc="doc.x_visit_availability_slot_id.x_name" />
-                    </td>
-                    <td style="border-right:none;">
-                    </td>
-                    <td style="border-right:none;text-align: right;">
-                      <h5 t-esc="doc.x_resident_bed_id.x_name" />
-                    </td>
-                  </tr>
-                </table>
-                <table style="width:100%;">
-                  <thead>
-                    <th>Visitor Name</th>
-                    <th>Temperature</th>
-                    <th>Test Result</th>
-                  </thead>
-                  <t t-foreach="doc.x_visitor_screening_ids" t-as="visitor">
+            <table style="width:100%;">
+              <thead>
+                <th style="text-align:center;">Time Slot</th>
+                <th style="text-align:center;">Bed</th>
+                <th style="text-align:center;">Visitor Name</th>
+                <th style="text-align:center;">Screening Questions?</th>
+                <th style="text-align:center;">Temperature &lt; 100</th>
+                <th style="text-align:center;">Negative Result?</th>
+              </thead>
+              <t t-foreach="docs.sorted(key=lambda doc: (doc.x_visit_availability_slot_id.x_availability_start_time, doc.x_resident_bed_id))" t-as="visit">
+                  <t t-foreach="visit.x_visitor_screening_ids" t-as="visitor">
                     <tr>
-                      <td style="border-bottom: 1px solid #495057;">
-                        <h4 t-esc="visitor.x_name" style="padding-top: 30px;"/>
+                      <td style="border-bottom: 1px solid #495057;text-align:center;">
+                        <h6 t-esc="visit.x_visit_availability_slot_id.x_name" style="padding-top: 30px;"/>
                       </td>
-                      <td style="border-bottom: 1px solid #495057;">
+                      <td style="border-bottom: 1px solid #495057;text-align:center;">
+                        <h6 t-esc="visit.x_resident_bed_id.x_name" />
                       </td>
-                      <td style="border-bottom: 1px solid #495057;">
+                      <td style="border-bottom: 1px solid #495057;text-align:center;">
+                        <h6 t-esc="visitor.x_name" />
+                      </td>
+                      <td style="border-bottom: 1px solid #495057;text-align:center;">
+                      </td>
+                      <td style="border-bottom: 1px solid #495057;text-align:center;">
+                      </td>
+                      <td style="border-bottom: 1px solid #495057;text-align:center;">
                       </td>
                     </tr>
                   </t>
-                </table>
-              </div>
-            </t>
+              </t>
+          </table>
         </t>
       </t>
     </template>

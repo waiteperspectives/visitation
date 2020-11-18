@@ -333,11 +333,15 @@ class VisitRequest(models.Model):
                 "x_question_large_groups",
                 "x_question_social_distancing",
             ]
+            fail_early = False
             for name in question_fields:
                 question_answers = record.x_screening_ids.mapped(name)
                 if "yes" in question_answers:
-                    record["x_availability_ids"] = self.env["x_availability_slot"]
-                    return False
+                    fail_early = True
+
+            if fail_early:
+              record["x_availability_ids"] = self.env["x_availability_slot"]
+              break
 
             test_dates = record.x_screening_ids.mapped("x_test_date")
             min_dates = set([])

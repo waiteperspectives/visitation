@@ -11,7 +11,7 @@
                 <th style="text-align:center;">Bed</th>
                 <th style="text-align:center;">Visitor Name</th>
                 <th style="text-align:center;">Screening Questions?</th>
-                <th style="text-align:center;">Temperature &lt; 100</th>
+                <th style="text-align:center;">Temperature &lt; 100?</th>
                 <th style="text-align:center;">Negative Result?</th>
               </thead>
               <t t-foreach="docs.sorted(key=lambda doc: (doc.x_visit_availability_slot_id.x_availability_start_time, doc.x_resident_bed_id))" t-as="visit">

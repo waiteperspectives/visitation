@@ -152,6 +152,26 @@ class VisitorScreening(models.Model):
         string="Visit Request",
     )
 
+    # questions
+    x_question_suspected_positive = fields.Selection(
+        [("yes", "Yes"), ("no", "No")], required=True
+    )
+    x_question_any_contact = fields.Selection(
+        [("yes", "Yes"), ("no", "No")], required=True
+    )
+    x_question_any_symptoms = fields.Selection(
+        [("yes", "Yes"), ("no", "No")], required=True
+    )
+    x_question_any_travel = fields.Selection(
+        [("yes", "Yes"), ("no", "No")], required=True
+    )
+    x_question_large_groups = fields.Selection(
+        [("yes", "Yes"), ("no", "No")], required=True
+    )
+    x_question_social_distancing = fields.Selection(
+        [("yes", "Yes"), ("no", "No")], required=True
+    )
+
     @api.depends("x_first_name", "x_last_name")
     def _compute_name(self):
         for record in self:
@@ -303,6 +323,22 @@ class VisitRequest(models.Model):
             # only slots where this unit is in slot eligible units OR eligible units is empty
             # AND only slots where capacity remains
             # AND only slots within the test_date + 2d, test_date + 6d window
+            # AND all screening questions no
+
+            question_fields = [
+                "x_question_suspected_positive",
+                "x_question_any_contact",
+                "x_question_any_symptoms",
+                "x_question_any_travel",
+                "x_question_large_groups",
+                "x_question_social_distancing",
+            ]
+            for name in question_fields:
+                question_answers = record.x_screening_ids.mapped(name)
+                if "yes" in question_answers:
+                    record["x_availability_ids"] = self.env["x_availability_slot"]
+                    return False
+
             test_dates = record.x_screening_ids.mapped("x_test_date")
             min_dates = set([])
             max_dates = set([])

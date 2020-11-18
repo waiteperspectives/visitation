@@ -125,11 +125,78 @@
                   />
               </group>
             </group>
-            <group>
-              <group>
-                <field name="x_test_date"  />
-              </group>
-            </group>
+            <notebook>
+            <page string="Screening Questions">
+              <div>
+                <label for="x_test_date" string="Test Date">
+                </label>
+                <br/>
+                -->
+                <field name="x_test_date"  
+                  />
+              </div>
+              <div>
+                <label for="x_question_suspected_positive"
+                  string="Have you or anyone in your household been tested positive or suspected positive in the past 14 days?. A NEGATIVE TEST RESULT IS REQUIRED."
+                  />
+                <br/>
+                -->
+                <field
+                  name="x_question_suspected_positive"
+                  />
+              </div>
+              <div>
+                <label for="x_question_any_contact"
+                  string="Have you had any contact with anyone who is COVID positive or suspected positive in the past 14 days?"
+                  />
+                <br/>
+                -->
+                <field
+                  name="x_question_any_contact"
+                  />
+              </div>
+              <div>
+                <label for="x_question_any_symptoms"
+                  string="Do you have now or have you had in the past 10 days any symptoms of COVID 19, including fever or chills, cough, shortness of breath or difficulty breathing, fatigue, muscle or body aches, headache, new loss of taste or smell, sore throat, congestion or runny nose, nausea, vomiting, diarrhea?"
+                  />
+                <br/>
+                -->
+                <field
+                  name="x_question_any_symptoms"
+                  />
+              </div>
+              <div>
+                <label for="x_question_any_travel"
+                  string="Have you travelled internationally or to any state identified by NYS as requiring 2 tests to get out of quarantine?"
+                  />
+                <br/>
+                -->
+                <field
+                  name="x_question_any_travel"
+                  />
+              </div>
+              <div>
+                <label for="x_question_large_groups"
+                  string="Have you participated in any large group gathering in the past 14 days where facemasks were NOT used by you or others?"
+                  />
+                <br/>
+                -->
+                <field
+                  name="x_question_large_groups"
+                  />
+              </div>
+              <div>
+                <label for="x_question_social_distancing"
+                  string="Have you participated in any large group gathering in the past 14 days where facemasks were NOT used by you or others?"
+                  />
+                <br/>
+                -->
+                <field
+                  name="x_question_social_distancing"
+                  />
+              </div>
+            </page>
+          </notebook>
           </sheet>
         </form>
       </field>

@@ -88,6 +88,72 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
             </label>
             <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" t-att-value="state.visitorTestDate" />
           </div>
+          <div class="form-group">
+            <label for="questionSuspectedPositive">
+            Have you or anyone in your household been tested positive or suspected positive in the past 14 days?. A NEGATIVE TEST RESULT IS REQUIRED.
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionSuspectedPositive" class="form-control" t-on-change="onQuestionSuspectedPositiveChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionAnyContact">
+              Have you had any contact with anyone who is COVID positive or suspected positive in the past 14 days?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionAnyContact" class="form-control" t-on-change="onQuestionAnyContactChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionAnySymptoms">
+              Do you have now or have you had in the past 10 days any symptoms of COVID 19, including fever or chills, cough, shortness of breath or difficulty breathing, fatigue, muscle or body aches, headache, new loss of taste or smell, sore throat, congestion or runny nose, nausea, vomiting, diarrhea?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionAnySymptoms" class="form-control" t-on-change="onQuestionAnySymptomsChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionAnyTravel">
+              Have you travelled internationally or to any state identified by NYS as requiring 2 tests to get out of quarantine?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionAnyTravel" class="form-control" t-on-change="onQuestionAnyTravelChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionLargeGroups">
+              Have you participated in any large group gathering in the past 14 days where facemasks were NOT used by you or others?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionLargeGroups" class="form-control" t-on-change="onQuestionLargeGroupsChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionSocialDistancing">
+              Have you participated in any large group gathering in the past 14 days where facemasks were NOT used by you or others?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionSocialDistancing" class="form-control" t-on-change="onQuestionSocialDistancingChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
         </div>
       </div>
     `;
@@ -148,6 +214,13 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       visitorZip: this.props.visitor.zip,
       visitorTestDate: this.props.visitor.testDate,
       visitorPrimary: this.props.visitor.primary,
+      // questions
+      questionSuspectedPositive: this.props.visitor.questionSuspectedPositive,
+      questionAnyContact: this.props.visitor.questionAnyContact,
+      questionAnySymptoms: this.props.visitor.questionAnySymptoms,
+      questionAnyTravel: this.props.visitor.questionAnyTravel,
+      questionLargeGroups: this.props.visitor.questionLargeGroups,
+      questionSocialDistancing: this.props.visitor.questionSocialDistancing,
     });
 
     phoneMask = (e) => {
@@ -177,6 +250,13 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
         zip: this.state.visitorZip,
         testDate: new Date(this.state.visitorTestDate),
         primary: this.state.visitorPrimary,
+        // questions
+        questionSuspectedPositive: this.state.questionSuspectedPositive,
+        questionAnyContact: this.state.questionAnyContact,
+        questionAnySymptoms: this.state.questionAnySymptoms,
+        questionAnyTravel: this.state.questionAnyTravel,
+        questionLargeGroups: this.state.questionLargeGroups,
+        questionSocialDistancing: this.state.questionSocialDistancing,
       });
       visitor.id = this.props.visitor.id;
       this.props.update(visitor);
@@ -187,13 +267,46 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       this.update();
     }
 
+    onQuestionSuspectedPositiveChanged = (e) => {
+      this.state.questionSuspectedPositive = e.target.value;
+      this.update();
+    }
+
+    onQuestionAnyContactChanged = (e) => {
+      this.state.questionAnyContact = e.target.value;
+      this.update();
+    }
+
+    onQuestionAnySymptomsChanged = (e) => {
+      this.state.questionAnySymptoms = e.target.value;
+      this.update();
+    }
+
+    onQuestionAnyTravelChanged = (e) => {
+      this.state.questionAnyTravel = e.target.value;
+      this.update();
+    }
+
+    onQuestionLargeGroupsChanged = (e) => {
+      this.state.questionLargeGroups = e.target.value;
+      this.update();
+    }
+
+    onQuestionSocialDistancingChanged = (e) => {
+      this.state.questionSocialDistancing = e.target.value;
+      this.update();
+    }
+
+
+  //zzz
+
   }
 
   class VisitorForm extends StepForm {
     static template = xml`
       <div class="VisitorForm container mt-3">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="col-md-6">
+          <form t-on-submit.prevent="nextStep" class="VisitationApp-form">
             <h3><t t-esc="props.heading" /></h3>
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <VisitorCard visitor="visitor" update="updateVisitor" states="props.dataValues.states" />

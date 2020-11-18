@@ -8,6 +8,11 @@ $active-color: $primary;
   justify-content: center;
   align-items: center;
 
+  .VisitationApp-form {
+    flex: 0 0 75%;
+    max-width: 75%;
+  }
+
   .Stepper {
     display: flex;
     align-items: center;

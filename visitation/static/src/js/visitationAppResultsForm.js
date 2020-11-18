@@ -9,7 +9,7 @@ odoo.define('visitation.visitationAppResultsForm', function(require) {
     static template = xml`
       <div class="ResultsForm container mt-3">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="" class="col-md-6">
+          <form t-on-submit.prevent="" class="VisitationApp-form">
             <div class="alert alert-success" role="alert">
               <p>
               Your visit has been scheduled for:

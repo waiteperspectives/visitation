@@ -185,6 +185,12 @@ odoo.define("visitation.visitationAppIO", function(require) {
               x_zip: visitor.zip,
               x_state_id: visitor.stateId,
               x_test_date: visitor.testDate,
+              x_question_suspected_positive: visitor.questionSuspectedPositive,
+              x_question_any_contact: visitor.questionAnyContact,
+              x_question_any_symptoms: visitor.questionAnySymptoms,
+              x_question_any_travel: visitor.questionAnyTravel,
+              x_question_large_groups: visitor.questionLargeGroups,
+              x_question_social_distancing: visitor.questionSocialDistancing,
             }]
           })
       newScreenings.unshift([6, 0, []]);
@@ -230,6 +236,13 @@ odoo.define('visitation.visitationAppBase', function () {
       this.zip = kwargs.zip || "";
       this.testDate = kwargs.testDate || undefined;
       this.primary = kwargs.primary || false;
+      // questions
+      this.questionSuspectedPositive = kwargs.questionSuspectedPositive || undefined;
+      this.questionAnyContact = kwargs.questionAnyContact || undefined;
+      this.questionAnySymptoms = kwargs.questionAnySymptoms || undefined;
+      this.questionAnyTravel = kwargs.questionAnyTravel || undefined;
+      this.questionLargeGroups = kwargs.questionLargeGroups || undefined;
+      this.questionSocialDistancing = kwargs.questionSocialDistancing || undefined;
     }
 
     isValid = () => {
@@ -246,6 +259,13 @@ odoo.define('visitation.visitationAppBase', function () {
       if ( !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email) ) { return false; }
       if ( !/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(this.phone) ) { return false; }
       if ( !/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(this.phone2) ) { return false; }
+      // questions
+      if ( this.questionSuspectedPositive === undefined ) { return false; }
+      if ( this.questionAnyContact === undefined ) { return false; }
+      if ( this.questionAnySymptoms === undefined ) { return false; }
+      if ( this.questionAnyTravel === undefined ) { return false; }
+      if ( this.questionLargeGroups === undefined ) { return false; }
+      if ( this.questionSocialDistancing === undefined ) { return false; }
       return true
     }
 
@@ -325,7 +345,7 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
     static template = xml`
       <div class="ResidentForm container mt-3">
         <div t-if="props.dataValues.beds.length" class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="col-md-6">
+          <form t-on-submit.prevent="nextStep" class="VisitationApp-form">
             <h3><t t-esc="props.heading" /></h3>
             <div class="form-group">
               <label for="residentUnit">
@@ -556,6 +576,72 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
             </label>
             <input type="date" class="form-control" name="visitorTestDate" t-model="state.visitorTestDate" t-on-change="update" t-att-value="state.visitorTestDate" />
           </div>
+          <div class="form-group">
+            <label for="questionSuspectedPositive">
+            Have you or anyone in your household been tested positive or suspected positive in the past 14 days?. A NEGATIVE TEST RESULT IS REQUIRED.
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionSuspectedPositive" class="form-control" t-on-change="onQuestionSuspectedPositiveChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionAnyContact">
+              Have you had any contact with anyone who is COVID positive or suspected positive in the past 14 days?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionAnyContact" class="form-control" t-on-change="onQuestionAnyContactChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionAnySymptoms">
+              Do you have now or have you had in the past 10 days any symptoms of COVID 19, including fever or chills, cough, shortness of breath or difficulty breathing, fatigue, muscle or body aches, headache, new loss of taste or smell, sore throat, congestion or runny nose, nausea, vomiting, diarrhea?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionAnySymptoms" class="form-control" t-on-change="onQuestionAnySymptomsChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionAnyTravel">
+              Have you travelled internationally or to any state identified by NYS as requiring 2 tests to get out of quarantine?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionAnyTravel" class="form-control" t-on-change="onQuestionAnyTravelChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionLargeGroups">
+              Have you participated in any large group gathering in the past 14 days where facemasks were NOT used by you or others?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionLargeGroups" class="form-control" t-on-change="onQuestionLargeGroupsChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="questionSocialDistancing">
+              Have you participated in any large group gathering in the past 14 days where facemasks were NOT used by you or others?
+              <span class="text-danger">*</span>
+            </label>
+            <select name="questionSocialDistancing" class="form-control" t-on-change="onQuestionSocialDistancingChanged">
+                <option value="" disabled="1" hidden="1" selected="1"/>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
         </div>
       </div>
     `;
@@ -616,6 +702,13 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       visitorZip: this.props.visitor.zip,
       visitorTestDate: this.props.visitor.testDate,
       visitorPrimary: this.props.visitor.primary,
+      // questions
+      questionSuspectedPositive: this.props.visitor.questionSuspectedPositive,
+      questionAnyContact: this.props.visitor.questionAnyContact,
+      questionAnySymptoms: this.props.visitor.questionAnySymptoms,
+      questionAnyTravel: this.props.visitor.questionAnyTravel,
+      questionLargeGroups: this.props.visitor.questionLargeGroups,
+      questionSocialDistancing: this.props.visitor.questionSocialDistancing,
     });
 
     phoneMask = (e) => {
@@ -645,6 +738,13 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
         zip: this.state.visitorZip,
         testDate: new Date(this.state.visitorTestDate),
         primary: this.state.visitorPrimary,
+        // questions
+        questionSuspectedPositive: this.state.questionSuspectedPositive,
+        questionAnyContact: this.state.questionAnyContact,
+        questionAnySymptoms: this.state.questionAnySymptoms,
+        questionAnyTravel: this.state.questionAnyTravel,
+        questionLargeGroups: this.state.questionLargeGroups,
+        questionSocialDistancing: this.state.questionSocialDistancing,
       });
       visitor.id = this.props.visitor.id;
       this.props.update(visitor);
@@ -655,13 +755,46 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       this.update();
     }
 
+    onQuestionSuspectedPositiveChanged = (e) => {
+      this.state.questionSuspectedPositive = e.target.value;
+      this.update();
+    }
+
+    onQuestionAnyContactChanged = (e) => {
+      this.state.questionAnyContact = e.target.value;
+      this.update();
+    }
+
+    onQuestionAnySymptomsChanged = (e) => {
+      this.state.questionAnySymptoms = e.target.value;
+      this.update();
+    }
+
+    onQuestionAnyTravelChanged = (e) => {
+      this.state.questionAnyTravel = e.target.value;
+      this.update();
+    }
+
+    onQuestionLargeGroupsChanged = (e) => {
+      this.state.questionLargeGroups = e.target.value;
+      this.update();
+    }
+
+    onQuestionSocialDistancingChanged = (e) => {
+      this.state.questionSocialDistancing = e.target.value;
+      this.update();
+    }
+
+
+  //zzz
+
   }
 
   class VisitorForm extends StepForm {
     static template = xml`
       <div class="VisitorForm container mt-3">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="col-md-6">
+          <form t-on-submit.prevent="nextStep" class="VisitationApp-form">
             <h3><t t-esc="props.heading" /></h3>
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <VisitorCard visitor="visitor" update="updateVisitor" states="props.dataValues.states" />
@@ -745,7 +878,7 @@ odoo.define('visitation.visitationAppSchedulingForm', function(require) {
     static template = xml`
       <div class="SchedulingForm container mt-3">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="col-md-6">
+          <form t-on-submit.prevent="nextStep" class="VisitationApp-form">
             <h3 t-if="props.availabilities.length"><t t-esc="props.heading" /></h3>
             <div t-if="props.availabilities.length" class="form-group">
               <label for="availabilitySlot">
@@ -814,7 +947,7 @@ odoo.define('visitation.visitationAppResultsForm', function(require) {
     static template = xml`
       <div class="ResultsForm container mt-3">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="" class="col-md-6">
+          <form t-on-submit.prevent="" class="VisitationApp-form">
             <div class="alert alert-success" role="alert">
               <p>
               Your visit has been scheduled for:

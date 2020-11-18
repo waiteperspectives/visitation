@@ -9,7 +9,7 @@ odoo.define('visitation.visitationAppSchedulingForm', function(require) {
     static template = xml`
       <div class="SchedulingForm container mt-3">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="col-md-6">
+          <form t-on-submit.prevent="nextStep" class="VisitationApp-form">
             <h3 t-if="props.availabilities.length"><t t-esc="props.heading" /></h3>
             <div t-if="props.availabilities.length" class="form-group">
               <label for="availabilitySlot">

@@ -9,7 +9,7 @@ odoo.define('visitation.visitationAppResidentForm', function(require) {
     static template = xml`
       <div class="ResidentForm container mt-3">
         <div t-if="props.dataValues.beds.length" class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="col-md-6">
+          <form t-on-submit.prevent="nextStep" class="VisitationApp-form">
             <h3><t t-esc="props.heading" /></h3>
             <div class="form-group">
               <label for="residentUnit">

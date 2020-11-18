@@ -185,6 +185,12 @@ odoo.define("visitation.visitationAppIO", function(require) {
               x_zip: visitor.zip,
               x_state_id: visitor.stateId,
               x_test_date: visitor.testDate,
+              x_question_suspected_positive: visitor.questionSuspectedPositive,
+              x_question_any_contact: visitor.questionAnyContact,
+              x_question_any_symptoms: visitor.questionAnySymptoms,
+              x_question_any_travel: visitor.questionAnyTravel,
+              x_question_large_groups: visitor.questionLargeGroups,
+              x_question_social_distancing: visitor.questionSocialDistancing,
             }]
           })
       newScreenings.unshift([6, 0, []]);

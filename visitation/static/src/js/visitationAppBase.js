@@ -19,6 +19,13 @@ odoo.define('visitation.visitationAppBase', function () {
       this.zip = kwargs.zip || "";
       this.testDate = kwargs.testDate || undefined;
       this.primary = kwargs.primary || false;
+      // questions
+      this.questionSuspectedPositive = kwargs.questionSuspectedPositive || undefined;
+      this.questionAnyContact = kwargs.questionAnyContact || undefined;
+      this.questionAnySymptoms = kwargs.questionAnySymptoms || undefined;
+      this.questionAnyTravel = kwargs.questionAnyTravel || undefined;
+      this.questionLargeGroups = kwargs.questionLargeGroups || undefined;
+      this.questionSocialDistancing = kwargs.questionSocialDistancing || undefined;
     }
 
     isValid = () => {
@@ -35,6 +42,13 @@ odoo.define('visitation.visitationAppBase', function () {
       if ( !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email) ) { return false; }
       if ( !/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(this.phone) ) { return false; }
       if ( !/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(this.phone2) ) { return false; }
+      // questions
+      if ( this.questionSuspectedPositive === undefined ) { return false; }
+      if ( this.questionAnyContact === undefined ) { return false; }
+      if ( this.questionAnySymptoms === undefined ) { return false; }
+      if ( this.questionAnyTravel === undefined ) { return false; }
+      if ( this.questionLargeGroups === undefined ) { return false; }
+      if ( this.questionSocialDistancing === undefined ) { return false; }
       return true
     }
 

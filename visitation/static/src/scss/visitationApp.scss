@@ -13,6 +13,19 @@ $active-color: $primary;
     max-width: 75%;
   }
 
+  .ToggleButtonGroup {
+    .ToggleButton-container {
+      padding: 1rem;
+    }
+
+    .ToggleButton {
+    }
+
+    .ToggleButton-selected {
+      border: 2px solid $normal-color;
+    }
+  }
+
   .Stepper {
     display: flex;
     align-items: center;

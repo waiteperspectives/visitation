@@ -1,14 +1,29 @@
-odoo.define('visitation.visitationAppVisitorForm', function(require) {
-  'use strict';
+odoo.define("visitation.visitationAppVisitorForm", function (require) {
+  "use strict";
 
   const { Component, useState } = owl;
   const { xml } = owl.tags;
-  const { StepForm, Visitor } = require('visitation.visitationAppBase');
+  const {
+    StepForm,
+    Visitor,
+    ToggleButtonGroup,
+  } = require("visitation.visitationAppBase");
 
   class VisitorCard extends Component {
     static template = xml`
       <div class="VisitorCard card mb-3">
         <div class="card-body">
+          <div class="row justify-content-between">
+            <h5 class="card-title mb-2 text-muted">
+              <span>Visitor #</span>
+              <span t-esc="props.counter" />
+            </h5>
+            <t t-if="props.counter === 2">
+              <button type="button" class="btn btn-primary" t-on-click="notifyCopyAddress">
+                Copy Address from Visitor #1
+              </button>
+            </t>
+          </div>
           <div class="form-group">
             <label for="visitorFirstName">
               First Name
@@ -159,48 +174,52 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
     `;
 
     isValidEmail = (email) => {
-      if ( this.visitorEmailFirstPass.flag ) {
+      if (this.visitorEmailFirstPass.flag) {
         return true;
       }
-      if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) {
-         return '';
+      if (
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+          email
+        )
+      ) {
+        return "";
       } else {
-       return 'is-invalid';
+        return "is-invalid";
       }
-    }
+    };
     isValidPhone2 = (phone) => {
-      if ( this.visitorPhone2FirstPass.flag ) {
+      if (this.visitorPhone2FirstPass.flag) {
         return true;
       }
       if (/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(phone)) {
-         return '';
+        return "";
       } else {
-       return 'is-invalid';
+        return "is-invalid";
       }
-    }
+    };
     isValidPhone = (phone) => {
-      if ( this.visitorPhoneFirstPass.flag ) {
+      if (this.visitorPhoneFirstPass.flag) {
         return true;
       }
       if (/^\([0-9]{3}\)\s[0-9]{3}\-[0-9]{4}$/.test(phone)) {
-         return '';
+        return "";
       } else {
-       return 'is-invalid';
+        return "is-invalid";
       }
-    }
+    };
 
-    visitorEmailFirstPass = useState({flag: true});
+    visitorEmailFirstPass = useState({ flag: true });
     firstPassCompleteEmail = () => {
       this.visitorEmailFirstPass.flag = false;
-    }
-    visitorPhoneFirstPass = useState({flag: true});
+    };
+    visitorPhoneFirstPass = useState({ flag: true });
     firstPassCompletePhone = () => {
       this.visitorPhoneFirstPass.flag = false;
-    }
-    visitorPhone2FirstPass = useState({flag: true});
+    };
+    visitorPhone2FirstPass = useState({ flag: true });
     firstPassCompletePhone2 = () => {
       this.visitorPhone2FirstPass.flag = false;
-    }
+    };
 
     state = useState({
       visitorFirstName: this.props.visitor.firstname,
@@ -210,7 +229,9 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       visitorPhone2: this.props.visitor.phone2,
       visitorStreet: this.props.visitor.street,
       visitorCity: this.props.visitor.city,
-      visitorState: this.props.visitor.stateId || this.props.states.find(x => x.name == 'New York').id,
+      visitorState:
+        this.props.visitor.stateId ||
+        this.props.states.find((x) => x.name == "New York").id,
       visitorZip: this.props.visitor.zip,
       visitorTestDate: this.props.visitor.testDate,
       visitorPrimary: this.props.visitor.primary,
@@ -223,19 +244,29 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       questionSocialDistancing: this.props.visitor.questionSocialDistancing,
     });
 
+    willStart = async () => {
+      console.log(this.props);
+    };
+
     phoneMask = (e) => {
-      const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-      e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-      if ( e.target.name === 'visitorPhone' ) {
+      const x = e.target.value
+        .replace(/\D/g, "")
+        .match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+      e.target.value = !x[2]
+        ? x[1]
+        : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+      if (e.target.name === "visitorPhone") {
         this.state.visitorPhone = e.target.value;
       }
-      if ( e.target.name === 'visitorPhone2' ) {
+      if (e.target.name === "visitorPhone2") {
         this.state.visitorPhone2 = e.target.value;
       }
-    }
+    };
 
     update = () => {
-      const state = this.props.states.find(s => s.id === parseInt(this.state.visitorState));
+      const state = this.props.states.find(
+        (s) => s.id === parseInt(this.state.visitorState)
+      );
       const stateName = state ? state.name : "";
       const visitor = new Visitor({
         firstname: this.state.visitorFirstName,
@@ -246,7 +277,7 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
         street: this.state.visitorStreet,
         city: this.state.visitorCity,
         stateId: this.state.visitorState,
-        stateName: stateName, 
+        stateName: stateName,
         zip: this.state.visitorZip,
         testDate: new Date(this.state.visitorTestDate),
         primary: this.state.visitorPrimary,
@@ -260,72 +291,73 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
       });
       visitor.id = this.props.visitor.id;
       this.props.update(visitor);
-    }
+    };
 
     onVisitorStateChanged = (e) => {
       this.state.visitorState = e.target.value;
       this.update();
-    }
+    };
 
     onQuestionSuspectedPositiveChanged = (e) => {
       this.state.questionSuspectedPositive = e.target.value;
       this.update();
-    }
+    };
 
     onQuestionAnyContactChanged = (e) => {
       this.state.questionAnyContact = e.target.value;
       this.update();
-    }
+    };
 
     onQuestionAnySymptomsChanged = (e) => {
       this.state.questionAnySymptoms = e.target.value;
       this.update();
-    }
+    };
 
     onQuestionAnyTravelChanged = (e) => {
       this.state.questionAnyTravel = e.target.value;
       this.update();
-    }
+    };
 
     onQuestionLargeGroupsChanged = (e) => {
       this.state.questionLargeGroups = e.target.value;
       this.update();
-    }
+    };
 
     onQuestionSocialDistancingChanged = (e) => {
       this.state.questionSocialDistancing = e.target.value;
       this.update();
-    }
+    };
 
-
-  //zzz
-
+    notifyCopyAddress = () => {
+      this.trigger("copy-visitor-address", { ndx: this.props.counter - 1 });
+    };
   }
 
   class VisitorForm extends StepForm {
     static template = xml`
       <div class="VisitorForm container mt-3">
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="VisitationApp-form">
-            <h3><t t-esc="props.heading" /></h3>
+          <div class="VisitationApp-form pb-3">
+            <div class="row justify-content-start">
+              <div class="col">
+                <h3>How many people will be visiting?</h3>
+              </div>
+              <div class="col d-flex align-items-center">
+                <ToggleButtonGroup options="state.options" setOptions="setOptions" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <form t-on-submit.prevent="nextStep" class="VisitationApp-form" t-on-copy-visitor-address="onCopyVisitorAddress">
+            <t t-set="visitorCounter" t-value="0" />
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
-              <VisitorCard visitor="visitor" update="updateVisitor" states="props.dataValues.states" />
+              <t t-set="visitorCounter" t-value="visitorCounter + 1" />
+              <VisitorCard visitor="visitor" update="updateVisitor" states="props.dataValues.states" counter="visitorCounter" />
             </t>
             <p class="text-muted font-italic">
             New York State permits 2 visitors for this upcoming visit. One must be 18 or older.
             </p>
-            <div t-if="state.visitors.length &lt; 2" class="d-flex justify-content-start mb-2">
-              <button class="btn btn-link" type="button" t-on-click="addVisitor">
-                <i class="fa fa-plus" />
-                Add Visitor
-              </button>
-            </div>
-            <div t-if="state.visitors.length == 2" class="d-flex justify-content-start">
-              <button class="btn btn-link" type="button" t-on-click="removeLastVisitor">
-                <i class="fa fa-plus" />
-                Remove Visitor
-              </button>
-            </div>
            <div class="d-flex justify-content-between">
               <button type="button" t-on-click="previousStep" class="btn btn-outline-secondary">
                 <i class="fa fa-arrow-left" />
@@ -343,39 +375,96 @@ odoo.define('visitation.visitationAppVisitorForm', function(require) {
 
     generateDefaultVisitors = () => {
       return [Visitor.generatePrimaryVisitor()];
-    }
+    };
 
     addVisitor = () => {
       this.state.visitors.push(new Visitor({}));
-    }
+    };
 
     updateVisitor = (visitor) => {
       const newVisitors = [...this.state.visitors];
-      const ndx = newVisitors.findIndex(v => v.id === visitor.id);
+      const ndx = newVisitors.findIndex((v) => v.id === visitor.id);
       newVisitors.splice(ndx, 1, visitor);
       this.state.visitors = newVisitors;
-    }
+    };
+
+    onCopyVisitorAddress = (e) => {
+      const fieldsToCopy = [
+        "phone",
+        "phone2",
+        "street",
+        "city",
+        "stateId",
+        "stateName",
+        "zip",
+      ];
+      const visitor1 = this.state.visitors[0];
+      const visitorN = Visitor.copyVisitor(this.state.visitors[e.detail.ndx]);
+      fieldsToCopy.forEach((fld) => {
+        visitorN[fld] = visitor1[fld];
+      });
+      this.updateVisitor(visitorN);
+    };
 
     removeLastVisitor = () => {
-      if ( this.state.visitors.length > 0 ) {
-        this.state.visitors = this.state.visitors.slice(0, this.state.visitors.length - 1);
+      if (this.state.visitors.length > 0) {
+        this.state.visitors = this.state.visitors.slice(
+          0,
+          this.state.visitors.length - 1
+        );
       }
-    }
+    };
+
+    manageVisitorCount = () => {
+      const selectedOpt = this.state.options.find(
+        (opt) => opt.selected === true
+      );
+      switch (selectedOpt.key) {
+        case 1:
+          if (this.state.visitors.length === 2) {
+            this.removeLastVisitor();
+          }
+          break;
+        case 2:
+          if (this.state.visitors.length === 1) {
+            this.addVisitor();
+          }
+          break;
+        default:
+          throw new Error("case not handled");
+      }
+    };
 
     state = useState({
-      visitors: this.props.init.visitors.length ? this.props.init.visitors: this.generateDefaultVisitors(),
+      visitors: this.props.init.visitors.length
+        ? this.props.init.visitors
+        : this.generateDefaultVisitors(),
+      options: [
+        { key: 1, name: "One", selected: true },
+        { key: 2, name: "Two", selected: false },
+      ],
     });
 
+    setOptions = (opts) => {
+      this.state.options = opts;
+      this.manageVisitorCount();
+    };
+
     validForm = () => {
-      if ( this.state.visitors.map(v => {
-        return v.isValid();
-      }).includes(false) ) { return false; }
+      if (
+        this.state.visitors
+          .map((v) => {
+            return v.isValid();
+          })
+          .includes(false)
+      ) {
+        return false;
+      }
       return true;
-    }
+    };
 
-    static components = { VisitorCard };
-
+    static components = { VisitorCard, ToggleButtonGroup };
   }
 
-  return { VisitorForm }
+  return { VisitorForm };
 });

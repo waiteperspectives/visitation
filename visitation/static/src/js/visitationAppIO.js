@@ -194,7 +194,7 @@ odoo.define("visitation.visitationAppIO", function (require) {
         [["id", "in", visitRequestAvailabilityIds]],
         ["id", "x_name"]
       );
-      if (availabilityResult.date.result) {
+      if (availabilityResult.data.result) {
         availabilityResult.data.result.forEach((availability) => {
           availability.name = availability.x_name;
         });

@@ -244,10 +244,6 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
       questionSocialDistancing: this.props.visitor.questionSocialDistancing,
     });
 
-    willStart = async () => {
-      console.log(this.props);
-    };
-
     phoneMask = (e) => {
       const x = e.target.value
         .replace(/\D/g, "")
@@ -349,7 +345,7 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
           </div>
         </div>
         <div class="row justify-content-center">
-          <form t-on-submit.prevent="nextStep" class="VisitationApp-form" t-on-copy-visitor-address="onCopyVisitorAddress">
+          <form t-on-submit.prevent="nextStep" class="VisitationApp-form" t-on-copy-visitor-address.prevent="onCopyVisitorAddress">
             <t t-set="visitorCounter" t-value="0" />
             <t t-foreach="state.visitors" t-as="visitor" t-key="visitor.id">
               <t t-set="visitorCounter" t-value="visitorCounter + 1" />

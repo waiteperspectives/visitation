@@ -14,6 +14,7 @@ class VisitationContent(models.Model):
 class ResidentUnit(models.Model):
     _name = "x_resident_unit"
     _description = "Resident Unit"
+    _rec_name = "x_name"
 
     x_name = fields.Char(required=True, string="Unit Name")
     x_active = fields.Boolean(default=True, string="Active")
@@ -22,6 +23,7 @@ class ResidentUnit(models.Model):
 class ResidentRoom(models.Model):
     _name = "x_resident_room"
     _description = "Resident Room"
+    _rec_name = "x_name"
 
     x_name = fields.Char(string="Room Number")
     x_active = fields.Boolean(default=True, string="Active")
@@ -30,6 +32,7 @@ class ResidentRoom(models.Model):
 class ResidentBed(models.Model):
     _name = "x_resident_bed"
     _description = "Resident Bed Position"
+    _rec_name = "x_name"
 
     x_name = fields.Char(compute="_compute_name", store=True, string="Name")
     x_active = fields.Boolean(default=True, string="Active")
@@ -65,6 +68,7 @@ class ResidentBed(models.Model):
 class AvailabilitySlot(models.Model):
     _name = "x_availability_slot"
     _description = "Availability slot"
+    _rec_name = "x_name"
 
     x_name = fields.Char(compute="_compute_name", store=True, string="Name")
     x_active = fields.Boolean(default=True, string="Active")
@@ -120,6 +124,7 @@ class AvailabilitySlot(models.Model):
 class VisitorScreening(models.Model):
     _name = "x_visitor_screening"
     _description = "Visitor screening"
+    _rec_name = "x_name"
 
     x_active = fields.Boolean(default=True, string="Active")
     x_name = fields.Char(compute="_compute_name", store=True, string="Name")
@@ -197,6 +202,7 @@ class ScheduledVisit(models.Model):
     _name = "x_scheduled_visit"
     _description = "Scheduled visit"
     _inherit = ["mail.thread", "mail.activity.mixin"]
+    _rec_name = "x_name"
 
     x_active = fields.Boolean(default=True, string="Active")
     x_name = fields.Char(compute="_compute_name", store=True, string="Name")
@@ -250,6 +256,7 @@ class ScheduledVisit(models.Model):
 class VisitRequest(models.Model):
     _name = "x_visit_request"
     _description = "Visit Request"
+    _rec_name = "x_name"
 
     x_active = fields.Boolean(default=True, string="Active")
     x_name = fields.Char(compute="_compute_name", store=True, string="Name")
@@ -325,23 +332,29 @@ class VisitRequest(models.Model):
             # AND only slots within the test_date + 2d, test_date + 6d window
             # AND all screening questions no
 
-            question_fields = [
+            question_no_fields = [
                 "x_question_suspected_positive",
                 "x_question_any_contact",
                 "x_question_any_symptoms",
                 "x_question_any_travel",
                 "x_question_large_groups",
+            ]
+            question_yes_fields = [
                 "x_question_social_distancing",
             ]
             fail_early = False
-            for name in question_fields:
+            for name in question_no_fields:
                 question_answers = record.x_screening_ids.mapped(name)
                 if "yes" in question_answers:
                     fail_early = True
+            for name in question_yes_fields:
+                question_answers = record.x_screening_ids.mapped(name)
+                if "no" in question_answers:
+                    fail_early = True
 
             if fail_early:
-              record["x_availability_ids"] = self.env["x_availability_slot"]
-              break
+                record["x_availability_ids"] = self.env["x_availability_slot"]
+                break
 
             test_dates = record.x_screening_ids.mapped("x_test_date")
             min_dates = set([])

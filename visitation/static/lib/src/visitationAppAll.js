@@ -894,6 +894,19 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
       this.visitorPhone2FirstPass.flag = false;
     };
 
+    visitorTestDateFormatted = (visitorTestDate) => {
+      let fmt = undefined;
+      try {
+        if (visitorTestDate && visitorTestDate !== null) {
+          fmt = visitorTestDate.toJSON().split("T")[0];
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        return fmt;
+      }
+    };
+
     state = useState({
       visitorFirstName: this.props.visitor.firstname,
       visitorLastName: this.props.visitor.lastname,
@@ -906,9 +919,9 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
         this.props.visitor.stateId ||
         this.props.states.find((x) => x.name == "New York").id,
       visitorZip: this.props.visitor.zip,
-      visitorTestDate: this.props.visitor.testDate
-        ? this.props.visitor.testDate.toJSON().split("T")[0]
-        : this.props.visitor.testDate,
+      visitorTestDate: this.visitorTestDateFormatted(
+        this.props.visitor.testDate
+      ),
       visitorPrimary: this.props.visitor.primary,
       // questions
       questionSuspectedPositive: this.props.visitor.questionSuspectedPositive,

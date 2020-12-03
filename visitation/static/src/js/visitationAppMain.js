@@ -110,7 +110,7 @@ odoo.define("visitation.visitationAppMain", function (require) {
         "We're sorry. Visitation is currently not open. Check back later.";
       this.state.visitRequest.visitConfirmationMessage =
         get("visitConfirmationMessage") ||
-        "A confirmation email has been sent to your email. You must bring a printed hard copy of your negative test result that includes your name, date tested and negative result. Remember to arrive 15 minutes after your appointment for the screen in procedure. Please call us if you unable to make your visit.";
+        "A confirmation email has been sent to your email. You must bring a printed hard copy of your negative test result that includes your name, date tested and negative result. Remember to arrive 15 minutes before your appointment for the screen in procedure. Please call us if you unable to make your visit.";
 
       IO.fetchStates(this.session).then((rs) => {
         this.state.dataValues.states = rs.data.result;

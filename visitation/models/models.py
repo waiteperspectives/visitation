@@ -364,12 +364,14 @@ class VisitRequest(models.Model):
                 min_dates.add(_min_date)
                 max_dates.add(_max_date)
             if min_dates and max_dates:
-                min_date = min(min_dates)
-                max_date = max(max_dates)
+                min_date = max(min_dates)
+                max_date = min(max_dates)
             else:
                 # when there are no tests yet, set wide range
                 min_date = datetime(1900, 1, 1)
                 max_date = datetime(2099, 1, 1)
+
+            print(min_date, max_date)
 
             candidate_slots = self.env["x_availability_slot"].search(
                 [

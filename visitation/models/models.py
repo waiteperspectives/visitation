@@ -269,7 +269,7 @@ class VisitRequest(models.Model):
     x_screening_ids = fields.One2many(
         comodel_name="x_visitor_screening",
         inverse_name="x_visit_request_id",
-        copy=False,
+        copy=True,
         string="Visitors",
     )
     x_availability_ids = fields.Many2many(

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+
+    <record id="action_reschedule_visit" model="ir.actions.server">
+      <field name="name">Visitation: Reschedule Visit</field>
+      <field name="type">ir.actions.server</field>
+      <field name="model_id" ref="visitation.model_x_visit_request" />
+      <field name="binding_model_id" ref="visitation.model_x_visit_request" />
+      <field name="state">code</field>
+      <field name="code">
+if not len(records) == 1:
+  raise UserError('This action should be executed on a single record')
+
+record['x_scheduled_visit_id'].unlink()
+record['x_scheduled_visit_id'] = False
+record['x_requested_availability_id'] = False
+      </field>
+    </record>
+    
+  </data>
+</odoo>

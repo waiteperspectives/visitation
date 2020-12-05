@@ -14,6 +14,7 @@
         "data/defaults.xml",
         "data/rpc_user.xml",
         "data/automated_actions.xml",
+        "data/server_actions.xml",
         "data/mail_templates.xml",
         "security/rules.xml",
         "views/assets.xml",

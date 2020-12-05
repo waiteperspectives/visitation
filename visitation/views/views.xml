@@ -320,6 +320,10 @@
               <group string="Result"
                 attrs="{'invisible': [('x_scheduled_visit_id', '=', False)]}"
                 >
+              <div attrs="{'invisible': [('x_invalid_scheduled_visit', '=', False)]}" class="alert alert-danger" role="alert">
+                <p>Changes to this request have caused the previously scheduled visit time slot to become ineligible. You should either revert your changes or reschedule this visit.</p>
+              </div>
+              <field name="x_invalid_scheduled_visit" invisible="1" />
                 <field name="x_scheduled_visit_id"
                   attrs="{'invisible': [('x_scheduled_visit_id', '=', False)]}"
                   nolabel="1"

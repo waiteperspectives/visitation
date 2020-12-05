@@ -299,6 +299,11 @@ class VisitRequest(models.Model):
         copy=False,
         string="Scheduled Visit",
     )
+    x_invalid_scheduled_visit = fields.Boolean(
+        compute="_compute_availability_ids",
+        store=True,
+        string="Invalid Scheduled Visit",
+    )
 
     @api.depends("x_scheduled_visit_id", "x_scheduled_visit_id.x_name")
     def _compute_name(self):
@@ -328,10 +333,29 @@ class VisitRequest(models.Model):
             comparison_weeks = [slot_week(x) for x in comparison_slots]
             return has_same_week(candiate_week, comparison_weeks)
 
-        def test_relevant_range(test_date):
-            min_date = test_date + timedelta(days=2)
-            max_date = test_date + timedelta(days=6)
+        def determine_eligibility_date_range(test_dates):
+            min_dates = set([])
+            max_dates = set([])
+            for test_date in test_dates:
+                _min_date = test_date + timedelta(days=2)
+                _max_date = test_date + timedelta(days=6)
+                min_dates.add(_min_date)
+                max_dates.add(_max_date)
+            if min_dates and max_dates:
+                min_date = max(min_dates)
+                max_date = min(max_dates)
+            else:
+                # when there are no tests yet, set wide range
+                min_date = datetime(1900, 1, 1)
+                max_date = datetime(2099, 1, 1)
             return min_date, max_date
+
+        def is_scheduled_visit_slot_invalid(record):
+            return (
+                record.x_scheduled_visit_id
+                and record.x_scheduled_visit_id.x_visit_availability_slot_id.id
+                not in record.x_availability_ids.ids
+            )
 
         # main
         for record in self:
@@ -363,22 +387,13 @@ class VisitRequest(models.Model):
 
             if fail_early:
                 record["x_availability_ids"] = self.env["x_availability_slot"]
+                record["x_invalid_scheduled_visit"] = is_scheduled_visit_slot_invalid(
+                    record
+                )
                 break
 
             test_dates = record.x_screening_ids.mapped("x_test_date")
-            min_dates = set([])
-            max_dates = set([])
-            for test_date in test_dates:
-                _min_date, _max_date = test_relevant_range(test_date)
-                min_dates.add(_min_date)
-                max_dates.add(_max_date)
-            if min_dates and max_dates:
-                min_date = max(min_dates)
-                max_date = min(max_dates)
-            else:
-                # when there are no tests yet, set wide range
-                min_date = datetime(1900, 1, 1)
-                max_date = datetime(2099, 1, 1)
+            min_date, max_date = determine_eligibility_date_range(test_dates)
 
             candidate_slots = self.env["x_availability_slot"].search(
                 [
@@ -420,11 +435,22 @@ class VisitRequest(models.Model):
             else:
                 record["x_availability_ids"] = candidate_slots
 
-            # add scheduled back in if exists
+            # add scheduled back in if exists and is valid
             if record.x_scheduled_visit_id:
-                record[
-                    "x_availability_ids"
-                ] += record.x_scheduled_visit_id.x_visit_availability_slot_id
+                elig_min, elig_max = determine_eligibility_date_range(
+                    record.x_screening_ids.mapped("x_test_date")
+                )
+                scheduled_visit_slot_date = (
+                    record.x_scheduled_visit_id.x_visit_availability_slot_id.x_availability_start_time.date()
+                )
+                scheduled_visit_slot_is_eligible = (
+                    scheduled_visit_slot_date >= elig_min
+                    and scheduled_visit_slot_date <= elig_max
+                )
+                if scheduled_visit_slot_is_eligible:
+                    record[
+                        "x_availability_ids"
+                    ] += record.x_scheduled_visit_id.x_visit_availability_slot_id
 
             # SIDE EFFECT: to empty selection when no longer valid
             if (
@@ -432,5 +458,10 @@ class VisitRequest(models.Model):
                 and record.x_requested_availability_id not in record.x_availability_ids
             ):
                 record["x_requested_availability_id"] = False
+
+            # SIDE EFFECT: set flag if not valid
+            record["x_invalid_scheduled_visit"] = is_scheduled_visit_slot_invalid(
+                record
+            )
 
         return True

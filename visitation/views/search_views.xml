@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+
+    <record id="view_scheduled_visit_search" model="ir.ui.view">
+      <field name="name">view_scheduled_visit_search</field>
+      <field name="model">x_scheduled_visit</field>
+      <field name="arch" type="xml">
+				 <search string="view_scheduled_visit_search">
+						<field name="x_visit_availability_slot_id" string="Time Slot" />
+						<field name="x_resident_bed_id" string="Bed" />
+						<filter string="Upcoming Visits" name="upcoming_visits"
+										domain="[('x_visit_availability_slot_id.x_availability_start_time', '&gt;=', context_today().strftime('%Y-%m-%d'))]"
+										help="Show all scheduled visits which are today or after"/>
+						<filter string="Today's Visits" name="today_visits"
+										domain="[('x_visit_availability_slot_id.x_availability_start_time', '&gt;=', context_today().strftime('%Y-%m-%d')), ('x_visit_availability_slot_id.x_availability_start_time', '&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"
+										help="Show all scheduled visits for today"/>
+						<filter string="Tomorrow's Visits" name="tomorrow_visits"
+										domain="[('x_visit_availability_slot_id.x_availability_start_time', '&gt;=', (context_today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')), ('x_visit_availability_slot_id.x_availability_start_time', '&lt;', (context_today() + datetime.timedelta(days=2)).strftime('%Y-%m-%d'))]"
+										help="Show all scheduled visits for tomorrow"/>
+						<group expand="0" string="Group By">
+								<filter string="Resident Unit" name="resident_unit" context="{'group_by':'x_resident_bed_unit_id'}" />
+								<filter string="Visit Start Time" name="weekly_visits" context="{'group_by': 'x_availability_start_time'}" />
+						</group>
+				</search>
+      </field>
+    </record>
+
+
+    <record id="view_visit_request_search" model="ir.ui.view">
+      <field name="name">view_visit_request_search</field>
+      <field name="model">x_visit_request</field>
+      <field name="arch" type="xml">
+				 <search string="view_visit_request_search">
+						<field name="x_requested_availability_id" string="Requested Time Slot" />
+						<field name="x_resident_bed_id" string="Resident Bed" />
+						<filter string="Has Visitors" name="has_visitors"
+										domain="[('x_screening_ids', '!=', False)]"
+										help="Show all requests which have visitors"/>
+						<filter string="Upcoming Requests" name="upcoming_requests"
+										domain="[('x_requested_availability_id.x_availability_start_time', '&gt;=', context_today().strftime('%Y-%m-%d'))]"
+										help="Show all requests which are today or after"/>
+						<separator />
+						<filter string="Abandoned Requests" name="abandoned_requests"
+										domain="[('x_requested_availability_id', '=', False)]"
+										help="Show all requests which were abandoned"/>
+				</search>
+      </field>
+    </record>
+
+    <record id="view_availability_slot_search" model="ir.ui.view">
+      <field name="name">view_availability_slot_search</field>
+      <field name="model">x_availability_slot</field>
+      <field name="arch" type="xml">
+				 <search string="view_visit_request_search">
+						<field name="x_name" />
+						<filter string="Upcoming Slots" name="upcoming_slots"
+										domain="[('x_availability_start_time', '&gt;=', context_today().strftime('%Y-%m-%d'))]"
+										help="Show all slots which begin today or after"/>
+				</search>
+      </field>
+    </record>
+  </data>
+</odoo>

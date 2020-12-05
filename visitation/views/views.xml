@@ -206,7 +206,7 @@
       <field name="name">view_scheduled_visit_tree</field>
       <field name="model">x_scheduled_visit</field>
       <field name="arch" type="xml">
-        <tree create="false" edit="false">
+        <tree create="false" edit="false" default_order="x_visit_availability_slot_id">
           <field name="x_visit_availability_slot_id"  />
           <field name="x_resident_bed_id" />
           <field name="x_visitor_screening_ids" widget="many2many_tags"  />

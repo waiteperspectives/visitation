@@ -69,6 +69,7 @@ class AvailabilitySlot(models.Model):
     _name = "x_availability_slot"
     _description = "Availability slot"
     _rec_name = "x_name"
+    _order = "x_availability_start_time"
 
     x_name = fields.Char(compute="_compute_name", store=True, string="Name")
     x_active = fields.Boolean(default=True, string="Active")
@@ -212,6 +213,10 @@ class ScheduledVisit(models.Model):
         ondelete="restrict",
         string="Time Slot",
     )
+    x_availability_start_time = fields.Datetime(
+        related="x_visit_availability_slot_id.x_availability_start_time",
+        store=True,
+    )
     x_visitor_screening_ids = fields.Many2many(
         comodel_name="x_visitor_screening",
         required=True,
@@ -222,6 +227,10 @@ class ScheduledVisit(models.Model):
         comodel_name="x_resident_bed",
         ondelete="restrict",
         string="Resident Bed",
+    )
+    x_resident_bed_unit_id = fields.Many2one(
+        comodel_name="x_resident_bed",
+        string="Resident Unit",
     )
     x_visit_request_id = fields.Many2one(
         comodel_name="x_visit_request",
@@ -371,8 +380,6 @@ class VisitRequest(models.Model):
                 min_date = datetime(1900, 1, 1)
                 max_date = datetime(2099, 1, 1)
 
-            print(min_date, max_date)
-
             candidate_slots = self.env["x_availability_slot"].search(
                 [
                     ("x_remaining_capacity", ">=", len(record.x_screening_ids)),
@@ -425,4 +432,5 @@ class VisitRequest(models.Model):
                 and record.x_requested_availability_id not in record.x_availability_ids
             ):
                 record["x_requested_availability_id"] = False
+
         return True

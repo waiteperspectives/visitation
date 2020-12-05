@@ -22,6 +22,7 @@
         "views/menus.xml",
         "views/templates.xml",
         "reports/screening_report.xml",
+        "views/search_views.xml",
     ],
     "demo": ["demo/data.xml"],
     "qweb": ["static/src/xml/*"],

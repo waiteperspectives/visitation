@@ -109,9 +109,7 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               <span class="text-danger">*</span>
             </label>
             <select name="questionSuspectedPositive" class="form-control" t-on-change="onQuestionSuspectedPositiveChanged" t-model="state.questionSuspectedPositive">
-                <t t-if="!state.questionSuspectedPositive">
-                  <option value="" disabled="1" hidden="1" selected="1"/>
-                </t>
+                <option t-if="!state.questionSuspectedPositive"value="" disabled="1" hidden="1" selected="1">-- Select --</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
@@ -122,9 +120,7 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               <span class="text-danger">*</span>
             </label>
             <select name="questionAnyContact" class="form-control" t-on-change="onQuestionAnyContactChanged" t-model="state.questionAnyContact">
-                <t t-if="!state.questionAnyContact">
-                  <option value="" disabled="1" hidden="1" selected="1"/>
-                </t>
+                <option t-if="!state.questionAnyContact" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
@@ -135,9 +131,7 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               <span class="text-danger">*</span>
             </label>
             <select name="questionAnySymptoms" class="form-control" t-on-change="onQuestionAnySymptomsChanged" t-model="state.questionAnySymptoms">
-                <t t-if="!state.questionAnySymptoms">
-                  <option value="" disabled="1" hidden="1" selected="1"/>
-                </t>
+                <option t-if="!state.questionAnySymptoms" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
@@ -148,9 +142,7 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               <span class="text-danger">*</span>
             </label>
             <select name="questionAnyTravel" class="form-control" t-on-change="onQuestionAnyTravelChanged" t-model="state.questionAnyTravel">
-                <t t-if="!state.questionAnyTravel">
-                  <option value="" disabled="1" hidden="1" selected="1"/>
-                </t>
+                <option t-if="!state.questionAnyTravel" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
@@ -161,9 +153,7 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               <span class="text-danger">*</span>
             </label>
             <select name="questionLargeGroups" class="form-control" t-on-change="onQuestionLargeGroupsChanged" t-model="state.questionLargeGroups">
-                <t t-if="!state.questionLargeGroups">
-                  <option value="" disabled="1" hidden="1" selected="1"/>
-                </t>
+                <option t-if="!state.questionLargeGroups" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
@@ -174,9 +164,7 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               <span class="text-danger">*</span>
             </label>
             <select name="questionSocialDistancing" class="form-control" t-on-change="onQuestionSocialDistancingChanged" t-model="state.questionSocialDistancing">
-                <t t-if="!state.questionSocialDistancing">
-                  <option value="" disabled="1" hidden="1" selected="1"/>
-                </t>
+                <option t-if="!state.questionSocialDistancing" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>

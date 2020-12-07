@@ -52,6 +52,24 @@ for rec in records.sudo():
           />
         <field name="filter_domain"></field>
     </record>
+
+    <record id="action_auto_check_unique_start_end_time" model="base.automation">
+        <field name="name">Visitation: Ensure no duplicate slots</field>
+        <field name="active" eval="True"/>
+        <field name="model_id" ref="visitation.model_x_availability_slot"/>
+        <field name="state">code</field>
+        <field name="code">
+for record in records:
+    existing_matches = model.search_count([
+      ('x_availability_start_time', '=', record.x_availability_start_time),
+      ('x_availability_end_time', '=', record.x_availability_end_time)
+    ])
+    if existing_matches > 1:
+        raise UserError('Can not have more than one slot with the same start and end times - %s' % record.x_name)
+        </field>
+        <field name="trigger">on_create_or_write</field>
+        <field name="filter_domain"></field>
+    </record>
     
   </data>
 </odoo>

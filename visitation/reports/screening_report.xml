@@ -5,7 +5,7 @@
     <template id="report_visitor_screening">
       <t t-call="web.html_container">
           <t t-call="web.external_layout">
-            <table style="width:100%;">
+            <table style="width:100%;font-size:0.8rem">
               <thead>
                 <th style="text-align:center;">Time Slot</th>
                 <th style="text-align:center;">Bed</th>
@@ -18,13 +18,13 @@
                   <t t-foreach="visit.x_visitor_screening_ids" t-as="visitor">
                     <tr>
                       <td style="border-bottom: 1px solid #495057;text-align:center;">
-                        <h6 t-esc="visit.x_visit_availability_slot_id.x_name" style="padding-top: 30px;"/>
+                        <p t-esc="visit.x_visit_availability_slot_id.x_name" style="padding-top: 30px;"/>
                       </td>
                       <td style="border-bottom: 1px solid #495057;text-align:center;">
-                        <h6 t-esc="visit.x_resident_bed_id.x_name" />
+                        <p t-esc="visit.x_resident_bed_id.x_name" />
                       </td>
                       <td style="border-bottom: 1px solid #495057;text-align:center;">
-                        <h6 t-esc="visitor.x_name" />
+                        <p t-esc="visitor.x_name" />
                       </td>
                       <td style="border-bottom: 1px solid #495057;text-align:center;">
                       </td>

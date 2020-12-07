@@ -786,10 +786,11 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
             Have you or anyone in your household been tested positive or suspected positive in the past 14 days?. A NEGATIVE TEST RESULT IS REQUIRED.
               <span class="text-danger">*</span>
             </label>
-            <select name="questionSuspectedPositive" class="form-control" t-on-change="onQuestionSuspectedPositiveChanged" t-model="state.questionSuspectedPositive">
-                <option t-if="!state.questionSuspectedPositive"value="" disabled="1" hidden="1" selected="1">-- Select --</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
+            <t t-set="answer" t-value="state.questionSuspectedPositive" />
+            <select name="questionSuspectedPositive" class="form-control" t-on-change="onQuestionSuspectedPositiveChanged">
+                <option t-if="!answer" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
+                <option t-att-selected="answer === 'yes'" value="yes">Yes</option>
+                <option t-att-selected="answer === 'no'" value="no">No</option>
             </select>
           </div>
           <div class="form-group">
@@ -797,10 +798,11 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               Have you had any contact with anyone who is COVID positive or suspected positive in the past 14 days?
               <span class="text-danger">*</span>
             </label>
-            <select name="questionAnyContact" class="form-control" t-on-change="onQuestionAnyContactChanged" t-model="state.questionAnyContact">
-                <option t-if="!state.questionAnyContact" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
+            <t t-set="answer" t-value="state.questionAnyContact" />
+            <select name="questionAnyContact" class="form-control" t-on-change="onQuestionAnyContactChanged">
+                <option t-if="!answer" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
+                <option t-att-selected="answer === 'yes'" value="yes">Yes</option>
+                <option t-att-selected="answer === 'no'" value="no">No</option>
             </select>
           </div>
           <div class="form-group">
@@ -808,10 +810,11 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               Do you have now or have you had in the past 10 days any symptoms of COVID 19, including fever or chills, cough, shortness of breath or difficulty breathing, fatigue, muscle or body aches, headache, new loss of taste or smell, sore throat, congestion or runny nose, nausea, vomiting, diarrhea?
               <span class="text-danger">*</span>
             </label>
-            <select name="questionAnySymptoms" class="form-control" t-on-change="onQuestionAnySymptomsChanged" t-model="state.questionAnySymptoms">
-                <option t-if="!state.questionAnySymptoms" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
+            <t t-set="answer" t-value="state.questionAnySymptoms" />
+            <select name="questionAnySymptoms" class="form-control" t-on-change="onQuestionAnySymptomsChanged">
+                <option t-if="!answer" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
+                <option t-att-selected="answer === 'yes'" value="yes">Yes</option>
+                <option t-att-selected="answer === 'no'" value="no">No</option>
             </select>
           </div>
           <div class="form-group">
@@ -819,10 +822,11 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               Have you travelled internationally or to any state identified by NYS as requiring 2 tests to get out of quarantine?
               <span class="text-danger">*</span>
             </label>
-            <select name="questionAnyTravel" class="form-control" t-on-change="onQuestionAnyTravelChanged" t-model="state.questionAnyTravel">
-                <option t-if="!state.questionAnyTravel" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
+            <t t-set="answer" t-value="state.questionAnyTravel" />
+            <select name="questionAnyTravel" class="form-control" t-on-change="onQuestionAnyTravelChanged">
+                <option t-if="!answer" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
+                <option t-att-selected="answer === 'yes'" value="yes">Yes</option>
+                <option t-att-selected="answer === 'no'" value="no">No</option>
             </select>
           </div>
           <div class="form-group">
@@ -830,10 +834,11 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               Have you participated in any large group gathering in the past 14 days where facemasks were NOT used by you or others?
               <span class="text-danger">*</span>
             </label>
-            <select name="questionLargeGroups" class="form-control" t-on-change="onQuestionLargeGroupsChanged" t-model="state.questionLargeGroups">
-                <option t-if="!state.questionLargeGroups" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
+            <t t-set="answer" t-value="state.questionLargeGroups" />
+            <select name="questionLargeGroups" class="form-control" t-on-change="onQuestionLargeGroupsChanged">
+                <option t-if="!answer" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
+                <option t-att-selected="answer === 'yes'" value="yes">Yes</option>
+                <option t-att-selected="answer === 'no'" value="no">No</option>
             </select>
           </div>
           <div class="form-group">
@@ -841,10 +846,11 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
               Have you consistently practiced social distancing in all public areas and used a face mask when in public?
               <span class="text-danger">*</span>
             </label>
-            <select name="questionSocialDistancing" class="form-control" t-on-change="onQuestionSocialDistancingChanged" t-model="state.questionSocialDistancing">
-                <option t-if="!state.questionSocialDistancing" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
+            <t t-set="answer" t-value="state.questionSocialDistancing" />
+            <select name="questionSocialDistancing" class="form-control" t-on-change="onQuestionSocialDistancingChanged">
+                <option t-if="!answer" value="" disabled="1" hidden="1" selected="1">-- Select --</option>
+                <option t-att-selected="answer === 'yes'" value="yes">Yes</option>
+                <option t-att-selected="answer === 'no'" value="no">No</option>
             </select>
           </div>
         </div>
@@ -885,7 +891,7 @@ odoo.define("visitation.visitationAppVisitorForm", function (require) {
         return "is-invalid";
       }
     };
-
+    questionLargeGroups;
     visitorEmailFirstPass = useState({ flag: true });
     firstPassCompleteEmail = () => {
       this.visitorEmailFirstPass.flag = false;
